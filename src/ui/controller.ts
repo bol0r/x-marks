@@ -29,6 +29,7 @@ import {
   lastFix,
   padHint,
   places,
+  query,
   ready,
   sheet,
   showRadar,
@@ -119,6 +120,10 @@ export function setTagFilter(v: string) {
 
 export function setStarFilter(n: number) {
   starFilter.value = cleanStars(n);
+}
+
+export function setQuery(v: string) {
+  query.value = v;
 }
 
 export function setViewMode(v: typeof view.value) {
