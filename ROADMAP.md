@@ -116,7 +116,7 @@ public/        icons, manifest
 - [x] **Zapis w ruchu.** Gdy prędkość > 30 km/h: zapisz też `heading` i `speed`, oznacz miejsce jako „przybliżone”, pokaż w liście „do sprawdzenia”. Gotowe gdy: miejsce z jazdy ma znacznik i da się je „poprawić na mapie” przeciągnięciem pinezki.
 - [x] **Popraw pozycję.** W edycji: mapa z przeciąganym X. Gotowe gdy: przeciągnięcie zmienia współrzędne i adres.
 - [x] **Notatka głosowa.** Przycisk mikrofonu w dymku i edycji (Web Speech API `pl-PL`; gdy brak, ukryj). Gotowe gdy: mówię, tekst ląduje w notatce.
-- [ ] **Więcej zdjęć.** Galeria do 6 zdjęć na miejsce, pierwsze = okładka, przeciąganie kolejności. Gotowe gdy: kafelek pokazuje okładkę, edycja galerię.
+- [x] **Więcej zdjęć.** Galeria do 6 zdjęć na miejsce, pierwsze = okładka, przeciąganie kolejności. Gotowe gdy: kafelek pokazuje okładkę, edycja galerię.
 - [ ] **Własne kategorie.** Do 6 kategorii: nazwa, kolor z palety tokenów, ikona z zestawu. Pieczątki na dole biorą 3 ulubione. Gotowe gdy: dodanie kategorii „Widok” działa w filtrach, kafelkach, mapie i eksporcie.
 - [ ] **Tagi i ocena.** Ocena 1–3 X, tagi (np. „parking”, „woda”, „zachód słońca”). Filtr po tagach. Gotowe gdy: filtr „woda + 3X” zwraca właściwe miejsca.
 - [ ] **Wyszukiwarka.** Pole szukania po nazwie, notatce, adresie i tagach (bez polskich znaków też: „lakowa” → „łąkowa”). Gotowe gdy: działa offline.

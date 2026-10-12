@@ -4,11 +4,11 @@ import { afterEach, describe, expect, it } from "vitest";
 import { motionFromFix } from "../../src/core/motion";
 import type { Place } from "../../src/core/types";
 import { serializeBackup } from "../../src/data/backup";
-import { XMarksDB, type MetaRow, type PhotoRow } from "../../src/data/db";
+import { XMarksDB, type MetaRow } from "../../src/data/db";
 
 class LegacyDB extends Dexie {
   places!: Table<Place, string>;
-  photos!: Table<PhotoRow, string>;
+  photos!: Table<{ id: string; blob: Blob }, string>;
   flights!: Table<{ id: string; placeId: string; ts: number }, string>;
   visits!: Table<{ id: string; placeId: string; ts: number }, string>;
   meta!: Table<MetaRow, string>;

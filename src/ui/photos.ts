@@ -1,5 +1,5 @@
 import { signal } from "@preact/signals";
-import { getPhoto } from "../data/store";
+import { getCover } from "../data/store";
 
 const urls = new Map<string, string>();
 export const photoTick = signal(0);
@@ -8,7 +8,7 @@ export async function photoURL(id: string): Promise<string | null> {
   const hit = urls.get(id);
   if (hit) return hit;
   try {
-    const b = await getPhoto(id);
+    const b = await getCover(id);
     if (!b) return null;
     const u = URL.createObjectURL(b);
     urls.set(id, u);

@@ -3,11 +3,13 @@ import { CATS } from "../../core/cats";
 import { dist, fmtCoords, fmtDist, fmtWhen } from "../../core/geo";
 import { navUrl, shareText } from "../../core/format";
 import { olcEncode } from "../../core/olc";
+import { clipGallery, GALLERY_MAX, moveGallery } from "../../core/gallery";
 import { joinNote } from "../../core/speech";
 import type { Cat, Place } from "../../core/types";
+import { listShots } from "../../data/store";
 import { archive, closeSheet, copyText, removePlace, saveEdit } from "../controller";
-import { lastFix, places } from "../state";
-import { photoURL, pickFile } from "../photos";
+import { lastFix, places, uid } from "../state";
+import { pickFile, shrink } from "../photos";
 import { PickMap } from "../../map/PickMap";
 import { MicButton } from "./MicButton";
 import { CatIcon } from "./Icons";
@@ -20,36 +22,38 @@ export function EditSheet({ id }: { id: string }) {
   return <EditForm key={id} place={p} />;
 }
 
+interface Shot {
+  id: string;
+  blob: Blob;
+  url: string;
+}
+
 function EditForm({ place }: { place: Place }) {
   const [name, setName] = useState(place.name || "");
   const [note, setNote] = useState(place.note || "");
   const [cat, setCat] = useState<Cat>(place.cat);
-  const [file, setFile] = useState<File | null>(null);
-  const [drop, setDrop] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [stored, setStored] = useState<string | null>(null);
+  const [shots, setShots] = useState<Shot[]>([]);
+  const [drag, setDrag] = useState<number | null>(null);
   const [msg, setMsg] = useState("");
   const [busy, setBusy] = useState(false);
   const [copyLabel, setCopyLabel] = useState("Kopiuj");
 
   useEffect(() => {
-    if (!place.photo) return;
     let on = true;
-    void photoURL(place.id).then((u) => {
-      if (on) setStored(u);
+    void listShots(place.id).then((rows) => {
+      if (!on) return;
+      setShots(rows.map((row) => ({ id: row.id, blob: row.blob, url: URL.createObjectURL(row.blob) })));
     });
     return () => {
       on = false;
+      setShots((list) => {
+        for (const shot of list) URL.revokeObjectURL(shot.url);
+        return [];
+      });
     };
-  }, [place.id, place.photo]);
+  }, [place.id]);
 
-  useEffect(() => {
-    return () => {
-      if (preview) URL.revokeObjectURL(preview);
-    };
-  }, [preview]);
-
-  const showPhoto = !drop && (preview || stored);
+  const cover = shots[0]?.url || "";
   const fix = lastFix.value;
 
   return (
@@ -58,40 +62,82 @@ function EditForm({ place }: { place: Place }) {
         <span class="ph">
           <CatIcon cat={cat} />
         </span>
-        {showPhoto ? <img id="covImg" alt="" src={preview || stored || ""} /> : null}
-        <div class="cover-acts">
-          <button
-            type="button"
-            class="btn small"
-            id="photoPick"
-            onClick={() => {
-              void pickFile().then((f) => {
-                if (!f) return;
-                if (preview) URL.revokeObjectURL(preview);
-                setFile(f);
-                setDrop(false);
-                setPreview(URL.createObjectURL(f));
-              });
-            }}
-          >
-            {showPhoto ? "Zmień zdjęcie" : "Dodaj zdjęcie"}
-          </button>
-          <button
-            type="button"
-            class="btn small"
-            id="photoDel"
-            hidden={!showPhoto}
-            onClick={() => {
-              if (preview) URL.revokeObjectURL(preview);
-              setFile(null);
-              setPreview(null);
-              setDrop(true);
-            }}
-          >
-            Usuń zdjęcie
-          </button>
-        </div>
+        {cover ? <img id="covImg" alt="" src={cover} /> : null}
       </div>
+      <div class="row">
+        <button
+          type="button"
+          class="btn small"
+          id="photoPick"
+          disabled={shots.length >= GALLERY_MAX}
+          onClick={() => {
+            void pickFile().then(async (f) => {
+              if (!f || shots.length >= GALLERY_MAX) return;
+              try {
+                const blob = await shrink(f);
+                setShots((list) => clipGallery([...list, { id: uid(), blob, url: URL.createObjectURL(blob) }]));
+              } catch {
+                setMsg("Nie udało się odczytać zdjęcia.");
+              }
+            });
+          }}
+        >
+          Dodaj zdjęcie
+        </button>
+        <button
+          type="button"
+          class="btn small"
+          id="photoDel"
+          hidden={!cover}
+          onClick={() => {
+            const first = shots[0];
+            if (first) URL.revokeObjectURL(first.url);
+            setShots((list) => list.slice(1));
+          }}
+        >
+          Usuń okładkę
+        </button>
+      </div>
+      {shots.length ? (
+        <div class="gallery" id="gallery">
+          {shots.map((shot, i) => (
+            <div
+              class="gshot"
+              key={shot.id}
+              draggable
+              data-i={i}
+              data-cover={i === 0 ? "1" : "0"}
+              onDragStart={(e) => {
+                setDrag(i);
+                e.dataTransfer?.setData("text/plain", String(i));
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                e.preventDefault();
+                const raw = e.dataTransfer?.getData("text/plain");
+                const from = raw ? Number(raw) : drag;
+                if (from == null || Number.isNaN(from)) return;
+                setShots((list) => moveGallery(list, from, i));
+                setDrag(null);
+              }}
+            >
+              <img alt="" src={shot.url} />
+              {i === 0 ? <span class="gcover">okładka</span> : null}
+              <button
+                type="button"
+                data-del="1"
+                aria-label="Usuń zdjęcie"
+                onClick={() => {
+                  URL.revokeObjectURL(shot.url);
+                  setShots((list) => list.filter((item) => item.id !== shot.id));
+                }}
+              >
+                ×
+              </button>
+            </div>
+          ))}
+        </div>
+      ) : null}
       <input
         id="nameIn"
         type="text"
@@ -181,7 +227,12 @@ function EditForm({ place }: { place: Place }) {
           disabled={busy}
           onClick={() => {
             setBusy(true);
-            void saveEdit(place.id, { name: name.trim(), note: note.trim(), cat, file, drop })
+            void saveEdit(place.id, {
+              name: name.trim(),
+              note: note.trim(),
+              cat,
+              shots: shots.map((shot) => ({ id: shot.id, blob: shot.blob })),
+            })
               .then(() => closeSheet())
               .catch(() => {
                 setMsg("Nie udało się zapisać zdjęcia. Reszta zmian jest zapisana.");
