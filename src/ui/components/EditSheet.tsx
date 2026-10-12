@@ -5,6 +5,7 @@ import { navUrl, shareText } from "../../core/format";
 import { olcEncode } from "../../core/olc";
 import { clipGallery, GALLERY_MAX, moveGallery } from "../../core/gallery";
 import { joinNote } from "../../core/speech";
+import { SUGGESTED_TAGS, addTag } from "../../core/tags";
 import type { Cat, Place } from "../../core/types";
 import { listShots } from "../../data/store";
 import { archive, closeSheet, copyText, removePlace, saveEdit } from "../controller";
@@ -32,6 +33,9 @@ function EditForm({ place }: { place: Place }) {
   const [name, setName] = useState(place.name || "");
   const [note, setNote] = useState(place.note || "");
   const [cat, setCat] = useState<Cat>(place.cat);
+  const [tags, setTags] = useState<string[]>(place.tags ?? []);
+  const [stars, setStars] = useState(place.stars ?? 0);
+  const [draft, setDraft] = useState("");
   const [shots, setShots] = useState<Shot[]>([]);
   const [drag, setDrag] = useState<number | null>(null);
   const [msg, setMsg] = useState("");
@@ -155,6 +159,57 @@ function EditForm({ place }: { place: Place }) {
         />
         <MicButton onText={(text) => setNote((n) => joinNote(n, text))} />
       </div>
+      <div class="stars" id="starPick" role="group" aria-label="Ocena">
+        {[1, 2, 3].map((n) => (
+          <button
+            type="button"
+            data-star={n}
+            aria-pressed={stars >= n}
+            aria-label={`Ocena ${n}`}
+            onClick={() => setStars(stars === n ? 0 : n)}
+          >
+            X
+          </button>
+        ))}
+      </div>
+      <div class="tags" id="tagChips">
+        {tags.map((tag) => (
+          <button type="button" class="chip" data-tag={tag} onClick={() => setTags(tags.filter((item) => item !== tag))}>
+            {tag} ×
+          </button>
+        ))}
+        {SUGGESTED_TAGS.filter((tag) => !tags.includes(tag)).map((tag) => (
+          <button type="button" class="chip" data-suggest={tag} onClick={() => setTags((list) => addTag(list, tag))}>
+            {tag}
+          </button>
+        ))}
+      </div>
+      <div class="inrow">
+        <input
+          id="tagIn"
+          type="text"
+          placeholder="Własny tag"
+          value={draft}
+          onInput={(e) => setDraft((e.target as HTMLInputElement).value)}
+          onKeyDown={(e) => {
+            if (e.key !== "Enter") return;
+            e.preventDefault();
+            setTags((list) => addTag(list, draft));
+            setDraft("");
+          }}
+        />
+        <button
+          type="button"
+          class="btn"
+          id="tagAdd"
+          onClick={() => {
+            setTags((list) => addTag(list, draft));
+            setDraft("");
+          }}
+        >
+          Dodaj
+        </button>
+      </div>
       <CatSeg id="editCat" value={cat} onPick={setCat} />
       <PickMap placeId={place.id} lat={place.lat} lng={place.lng} cat={place.cat} />
       <div class="meta-line" id="editMeta">
@@ -231,6 +286,8 @@ function EditForm({ place }: { place: Place }) {
               name: name.trim(),
               note: note.trim(),
               cat,
+              tags,
+              stars,
               shots: shots.map((shot) => ({ id: shot.id, blob: shot.blob })),
             })
               .then(() => closeSheet())

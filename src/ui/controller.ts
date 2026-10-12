@@ -2,6 +2,7 @@ import { catalog, catOf, catSlug, isBuiltin, isIcon, isPalette, MAX_CATS, pickFa
 import { readCatBook, writeCatBook } from "../data/cats";
 import { motionFromFix } from "../core/motion";
 import { joinNote } from "../core/speech";
+import { cleanStars, cleanTags } from "../core/tags";
 import { COACH_STEPS, COACH_VERSION, stepsFor } from "../core/coach";
 import { readCoach, writeCoachVersion } from "../data/coach";
 import { fmtWhen } from "../core/geo";
@@ -33,7 +34,9 @@ import {
   showRadar,
   showSplash,
   sortNear,
+  starFilter,
   swipedOnce,
+  tagFilter,
   toast,
   uid,
   view,
@@ -108,6 +111,14 @@ function replacePlace(id: string, patch: Partial<Place>) {
 
 export function setFilter(f: typeof filter.value) {
   filter.value = f;
+}
+
+export function setTagFilter(v: string) {
+  tagFilter.value = v;
+}
+
+export function setStarFilter(n: number) {
+  starFilter.value = cleanStars(n);
 }
 
 export function setViewMode(v: typeof view.value) {
@@ -206,6 +217,8 @@ export async function addPlace(cat: Cat, lat: number, lng: number, acc: number |
     note: "",
     addr: "",
     src: src || "gps",
+    tags: [],
+    stars: 0,
     ...(motion ? { speed: motion.speed, heading: motion.heading, approx: true } : {}),
   };
   places.value = [p, ...places.value];
@@ -456,11 +469,21 @@ export async function setCover(id: string, file: Blob): Promise<boolean> {
   }
 }
 
-export async function saveEdit(id: string, patch: { name: string; note: string; cat: Cat; shots: { id: string; blob: Blob }[] }) {
+export async function saveEdit(
+  id: string,
+  patch: { name: string; note: string; cat: Cat; shots: { id: string; blob: Blob }[]; tags: string[]; stars: number },
+) {
   await readyGate;
   const p = places.value.find((x) => x.id === id);
   if (!p) return;
-  const next: Partial<Place> = { name: patch.name, note: patch.note, cat: patch.cat, photo: patch.shots.length > 0 };
+  const next: Partial<Place> = {
+    name: patch.name,
+    note: patch.note,
+    cat: patch.cat,
+    photo: patch.shots.length > 0,
+    tags: cleanTags(patch.tags),
+    stars: cleanStars(patch.stars),
+  };
   try {
     await replaceShots(id, patch.shots);
     dropPhotoURL(id);

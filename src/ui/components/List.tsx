@@ -51,6 +51,8 @@ function Card({ p, marked }: { p: Place; marked?: boolean }) {
   const fix = lastFix.value;
   const distBit = fix ? fmtDist(dist(fix, p)) : "";
   const addrBit = p.name && p.addr ? p.addr : "";
+  const stars = p.stars ?? 0;
+  const tags = p.tags ?? [];
   return (
     <div class="sw" data-id={p.id} data-coach={marked ? "card" : undefined}>
       <i class="xm" style={`--c:var(${catOf(p.cat).color})`}>
@@ -66,6 +68,11 @@ function Card({ p, marked }: { p: Place; marked?: boolean }) {
         <div style="min-width:0">
           <div class="top">
             <span class="cat">{catOf(p.cat).label}</span>
+            {stars > 0 ? (
+              <span class="marks" data-stars={stars}>
+                {"X".repeat(stars)}
+              </span>
+            ) : null}
             <span class="when">{fmtWhen(p.ts)}</span>
           </div>
           <p class="name">{titleOf(p)}</p>
@@ -82,6 +89,15 @@ function Card({ p, marked }: { p: Place; marked?: boolean }) {
             {p.acc != null ? ` · ±${p.acc} m` : ""}
           </div>
           {p.note ? <div class="note">{p.note}</div> : null}
+          {tags.length ? (
+            <div class="tags">
+              {tags.map((tag) => (
+                <span class="tag" data-tag={tag}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          ) : null}
           <div class="acts">
             <a href={navUrl(p)} target="_blank" rel="noopener">
               Prowadź

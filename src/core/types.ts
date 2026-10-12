@@ -19,6 +19,10 @@ export interface Place {
   heading?: number | null;
   /** true, gdy zapisano powyżej 30 km/h i pozycja czeka na poprawkę. */
   approx?: boolean;
+  /** krótkie etykiety, np. „woda”. */
+  tags?: string[];
+  /** 0–3, liczba X. */
+  stars?: number;
 }
 
 export interface Fix {

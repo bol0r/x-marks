@@ -1,5 +1,6 @@
 import { isBuiltin, isCat, isIcon, isPalette, type CatDef } from "../core/cats";
 import { GALLERY_MAX } from "../core/gallery";
+import { cleanStars, cleanTags } from "../core/tags";
 import type { Place } from "../core/types";
 
 export interface BackupPhoto {
@@ -61,7 +62,7 @@ export function planImport(existing: Place[], data: unknown): ImportPlan {
     if (!item || typeof item !== "object") continue;
     const p = item as Place;
     if (!(p.id && isCat(p.cat, extra) && Number.isFinite(p.lat) && Number.isFinite(p.lng)) || ids.has(p.id)) continue;
-    const q: Place = { ...p };
+    const q: Place = { ...p, tags: cleanTags(p.tags), stars: cleanStars(p.stars) };
     const order = Array.isArray(gallery?.[p.id])
       ? (gallery[p.id] as unknown[]).filter((id): id is string => typeof id === "string").slice(0, GALLERY_MAX)
       : null;
