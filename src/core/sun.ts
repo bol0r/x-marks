@@ -96,3 +96,11 @@ export function fmtSlot(t: number | null, timeZone?: string): string {
   const day = new Intl.DateTimeFormat("pl-PL", { weekday: "short", timeZone }).format(t).replace(/\./g, "");
   return `${day} ${fmtClock(t, timeZone)}`;
 }
+
+/** Dzisiejszy zachód i wieczorna złota godzina (od 6° do zachodu), bez sieci. */
+export function goldenLine(when: number, lat: number, lng: number, timeZone?: string): string | null {
+  const sun = sunTimes(when, lat, lng);
+  if (!sun) return null;
+  const set = fmtClock(sun.sunset, timeZone);
+  return `zachód ${set} · złota ${fmtClock(sun.goldenEveningStart, timeZone)}–${set}`;
+}
