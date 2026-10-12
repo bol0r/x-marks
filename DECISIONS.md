@@ -1,5 +1,6 @@
 # Decyzje agenta
 
+- Galeria trzyma do 6 zdjęć w Dexie (`placeId` i `ord`); migracja v3 dopisuje starym zdjęciom kolejność 0, a kopia JSON niesie całą galerię i nadal wczytuje stary plik z jednym zdjęciem.
 - Notatka głosowa używa Web Speech API `pl-PL` bez dodatkowej biblioteki; w dymku dopisuje się od razu do miejsca, w edycji do pola notatki, a brak API chowa przycisk.
 - W edycji osobna mapa z przeciąganym X zapisuje nową pozycję także gdy palec puści poza mapą, a adres jest szukany od nowa; baza zostaje bez nowej wersji.
 - Zapis powyżej 30 km/h trzyma prędkość w km/h, kurs i znacznik przybliżenia; po przesunięciu pinezki znacznik schodzi, a adres jest szukany od nowa. Migracja Dexie v2 dopisuje starym miejscom `approx: false` i niczego nie usuwa.

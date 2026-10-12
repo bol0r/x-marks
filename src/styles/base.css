@@ -1067,6 +1067,56 @@ input[type="text"]:focus {
     repeating-radial-gradient(circle at 70% 40%, transparent 0 15px, color-mix(in srgb, var(--c) 18%, transparent) 15px 16px),
     color-mix(in srgb, var(--c) 10%, var(--bg));
 }
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-5);
+}
+.gshot {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: var(--r-md);
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  cursor: grab;
+}
+.gshot[data-cover="1"] {
+  box-shadow: 0 0 0 var(--s-1) var(--mark);
+}
+.gshot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  pointer-events: none;
+}
+.gcover {
+  position: absolute;
+  left: var(--s-2);
+  bottom: var(--s-2);
+  font: 700 9px var(--body);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--on-photo);
+  background: var(--scrim);
+  border-radius: var(--r-xs);
+  padding: 0 var(--s-2);
+}
+.gshot button {
+  position: absolute;
+  top: var(--s-1);
+  right: var(--s-1);
+  width: var(--s-10);
+  height: var(--s-10);
+  border: 0;
+  border-radius: var(--r-pill);
+  background: var(--scrim);
+  color: var(--on-photo);
+  cursor: pointer;
+  line-height: 1;
+}
 .cover img {
   position: absolute;
   inset: 0;

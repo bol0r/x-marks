@@ -25,7 +25,7 @@ export async function importLegacyPlaces(database: XMarksDB, legacy: Place[], ph
   await database.transaction("rw", database.places, database.photos, database.meta, async () => {
     if (list.length) await database.places.bulkPut(list);
     for (const [id, blob] of photos) {
-      if (blob) await database.photos.put({ id, blob });
+      if (blob) await database.photos.put({ id, placeId: id, blob, ord: 0 });
     }
     await database.meta.put({ key: "migrated", value: "1" });
   });

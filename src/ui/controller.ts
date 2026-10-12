@@ -9,7 +9,7 @@ import { toGPX } from "../core/format";
 import { geocode, reverseGeocodeAddress } from "../core/nominatim";
 import { blobToDataURL, dataURLToBlob, planImport, serializeBackup } from "../data/backup";
 import { loadBackupStamp, loadPlacesSync, markSwiped, saveBackupStamp, saveView } from "../data/legacy";
-import { delPhoto, getPhoto, loadPlaces, putPhoto, savePlaces } from "../data/store";
+import { delPlacePhotos, listShots, loadPlaces, putShot, replaceShots, savePlaces, setCoverBlob } from "../data/store";
 import type { Cat, Fix, Place } from "../core/types";
 import { dropPhotoURL, pickFile, shrink } from "./photos";
 import {
@@ -430,7 +430,7 @@ function removeNow(id: string) {
     ],
     onExpire: () => {
       if (p.photo) {
-        void delPhoto(p.id).catch(() => undefined);
+        void delPlacePhotos(p.id).catch(() => undefined);
         dropPhotoURL(p.id);
       }
     },
@@ -441,7 +441,7 @@ export async function setCover(id: string, file: Blob): Promise<boolean> {
   await readyGate;
   try {
     const b = await shrink(file);
-    await putPhoto(id, b);
+    await setCoverBlob(id, b);
     if (places.value.some((x) => x.id === id)) {
       dropPhotoURL(id);
       replacePlace(id, { photo: true });
@@ -454,23 +454,14 @@ export async function setCover(id: string, file: Blob): Promise<boolean> {
   }
 }
 
-export async function saveEdit(id: string, patch: { name: string; note: string; cat: Cat; file: File | null; drop: boolean }) {
+export async function saveEdit(id: string, patch: { name: string; note: string; cat: Cat; shots: { id: string; blob: Blob }[] }) {
   await readyGate;
   const p = places.value.find((x) => x.id === id);
   if (!p) return;
-  const next: Partial<Place> = { name: patch.name, note: patch.note, cat: patch.cat };
+  const next: Partial<Place> = { name: patch.name, note: patch.note, cat: patch.cat, photo: patch.shots.length > 0 };
   try {
-    if (patch.drop && p.photo) {
-      await delPhoto(p.id);
-      next.photo = false;
-      dropPhotoURL(p.id);
-    }
-    if (patch.file) {
-      const b = await shrink(patch.file);
-      await putPhoto(p.id, b);
-      next.photo = true;
-      dropPhotoURL(p.id);
-    }
+    await replaceShots(id, patch.shots);
+    dropPhotoURL(id);
   } catch {
     replacePlace(id, next);
     await persist();
@@ -487,15 +478,27 @@ export function markSwipedOnce() {
 
 export async function backupJSON(): Promise<string> {
   const photos: Record<string, string> = {};
-  for (const p of places.value.filter((x) => x.photo)) {
+  const gallery: Record<string, string[]> = {};
+  for (const p of places.value) {
+    let rows: { id: string; blob: Blob }[] = [];
     try {
-      const b = await getPhoto(p.id);
-      if (b) photos[p.id] = await blobToDataURL(b);
+      rows = await listShots(p.id);
     } catch {
-      /* pomiń uszkodzone zdjęcie, reszta kopii zostaje */
+      continue;
     }
+    if (!rows.length) continue;
+    gallery[p.id] = [];
+    for (const row of rows) {
+      try {
+        photos[row.id] = await blobToDataURL(row.blob);
+        gallery[p.id]?.push(row.id);
+      } catch {
+        /* pomiń uszkodzone zdjęcie, reszta kopii zostaje */
+      }
+    }
+    if (!gallery[p.id]?.length) delete gallery[p.id];
   }
-  return serializeBackup(places.value, photos);
+  return serializeBackup(places.value, photos, new Date(), gallery);
 }
 
 export function lastBackupTxt(): string {
@@ -564,9 +567,9 @@ export async function runImport(file: File): Promise<number> {
   const plan = planImport(places.value, data);
   for (const ph of plan.photos) {
     try {
-      await putPhoto(ph.id, dataURLToBlob(ph.dataUrl));
+      await putShot({ id: ph.id, placeId: ph.placeId, blob: dataURLToBlob(ph.dataUrl), ord: ph.ord });
     } catch {
-      const p = plan.added.find((x) => x.id === ph.id);
+      const p = plan.added.find((x) => x.id === ph.placeId);
       if (p) p.photo = false;
     }
   }

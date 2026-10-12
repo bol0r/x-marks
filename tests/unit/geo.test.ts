@@ -52,7 +52,7 @@ describe("kopia", () => {
     });
     expect(plan.added.map((p) => p.id)).toEqual(["b"]);
     expect(plan.added[0]?.photo).toBe(true);
-    expect(plan.photos).toEqual([{ id: "b", dataUrl: "data:image/jpeg;base64,QQ==" }]);
+    expect(plan.photos).toEqual([{ id: "b", placeId: "b", ord: 0, dataUrl: "data:image/jpeg;base64,QQ==" }]);
   });
 
   it("import przyjmuje samą tablicę z v0.1", () => {
