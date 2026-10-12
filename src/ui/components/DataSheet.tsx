@@ -9,12 +9,12 @@ export function DataSheet() {
     <Sheet onClose={closeSheet}>
       <h2>Dane</h2>
       <p>
-        Miejsca i zdjęcia są zapisane tylko na tym telefonie ({places.value.length} szt.). Nikt inny ich nie widzi, nawet pod tym samym adresem. Ostatnia
-        kopia: <b>{lastBackupTxt()}</b>.
+        Miejsca i zdjęcia są zapisane tylko na tym telefonie ({places.value.length} szt.). Nikt inny ich nie widzi, nawet pod tym samym
+        adresem. Ostatnia kopia: <b>{lastBackupTxt()}</b>.
       </p>
       <p>
-        <b>Zapisz kopię</b> otwiera menu udostępniania: wybierz „Zachowaj w Plikach” (iCloud Drive) albo Dysk Google. Kopia zawiera też zdjęcia. Wczytasz ją
-        przez „Importuj” na dowolnym telefonie.
+        <b>Zapisz kopię</b> otwiera menu udostępniania: wybierz „Zachowaj w Plikach” (iCloud Drive) albo Dysk Google. Kopia zawiera też
+        zdjęcia. Wczytasz ją przez „Importuj” na dowolnym telefonie.
       </p>
       <div class="row" style="justify-content:flex-start">
         <button type="button" class="btn primary" data-a="backup" onClick={() => void runBackup(setMsg)}>

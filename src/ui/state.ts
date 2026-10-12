@@ -38,10 +38,7 @@ export interface ToastModel {
 
 export const toast = signal<ToastModel | null>(null);
 
-export type SheetModel =
-  | { kind: "edit"; id: string }
-  | { kind: "paste"; cat: Cat | null; prefill: string }
-  | { kind: "data" };
+export type SheetModel = { kind: "edit"; id: string } | { kind: "paste"; cat: Cat | null; prefill: string } | { kind: "data" };
 
 export const sheet = signal<SheetModel | null>(null);
 

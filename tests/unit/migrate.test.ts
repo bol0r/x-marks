@@ -40,7 +40,11 @@ describe("migracja v0.4", () => {
   it("przenosi miejsca i zdjęcie, a drugie uruchomienie nie wskrzesza usuniętego", async () => {
     const database = fresh();
     const blob = new Blob([new Uint8Array([1, 2, 3, 4])], { type: "image/jpeg" });
-    const first = await importLegacyPlaces(database, [place("p1", { photo: true }), place("ex1")].filter((p) => !p.id.startsWith("ex")), [["p1", blob]]);
+    const first = await importLegacyPlaces(
+      database,
+      [place("p1", { photo: true }), place("ex1")].filter((p) => !p.id.startsWith("ex")),
+      [["p1", blob]],
+    );
     expect(first).toMatchObject({ places: 1, photos: 1, skipped: false });
     const saved = await database.places.get("p1");
     expect(saved?.name).toBe("Polana");
@@ -48,7 +52,7 @@ describe("migracja v0.4", () => {
     expect(saved?.photo).toBe(true);
     expect(saved?.lat).toBe(51.10994);
     const row = await database.photos.get("p1");
-    expect([...(new Uint8Array(await row!.blob.arrayBuffer()))]).toEqual([1, 2, 3, 4]);
+    expect([...new Uint8Array(await row!.blob.arrayBuffer())]).toEqual([1, 2, 3, 4]);
 
     const backup = JSON.parse(serializeBackup([saved!], { p1: "data:image/jpeg;base64,AQIDBA==" })) as {
       places: Place[];

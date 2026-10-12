@@ -98,7 +98,13 @@ async function draw(el: HTMLElement, items: Place[], fix: Fix | null) {
           {
             type: "Feature",
             properties: {},
-            geometry: { type: "LineString", coordinates: [[fix.lng, fix.lat], [near.lng, near.lat]] },
+            geometry: {
+              type: "LineString",
+              coordinates: [
+                [fix.lng, fix.lat],
+                [near.lng, near.lat],
+              ],
+            },
           },
         ],
       };

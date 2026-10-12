@@ -421,7 +421,9 @@ export function lastBackupTxt(): string {
 
 async function dl(name: string, text: string, type: string, msg?: (t: string) => void) {
   const blob = new Blob([text], { type });
-  const w = window as Window & { claude?: { use?: (n: string) => Promise<{ save: (o: { filename: string; data: Blob }) => Promise<void> } | null> } };
+  const w = window as Window & {
+    claude?: { use?: (n: string) => Promise<{ save: (o: { filename: string; data: Blob }) => Promise<void> } | null> };
+  };
   try {
     const d = w.claude?.use ? await w.claude.use("downloads") : null;
     if (d) {
@@ -556,7 +558,8 @@ export async function boot() {
   }
   startWatch();
   if (sharedText) openPaste(null, sharedText);
-  if (import.meta.env.PROD && location.protocol === "https:" && !inFrame) {
+  const local = location.hostname === "localhost" || location.hostname === "127.0.0.1";
+  if (import.meta.env.PROD && (location.protocol === "https:" || local) && !inFrame) {
     const { registerSW } = await import("virtual:pwa-register");
     registerSW({ immediate: true });
   }

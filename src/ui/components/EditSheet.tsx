@@ -89,8 +89,20 @@ function EditForm({ place }: { place: Place }) {
           </button>
         </div>
       </div>
-      <input id="nameIn" type="text" placeholder="Nazwa, np. Polana nad Odrą" value={name} onInput={(e) => setName((e.target as HTMLInputElement).value)} />
-      <textarea id="noteIn" rows={3} placeholder="Notatka: dojazd, pora dnia, na co uważać" value={note} onInput={(e) => setNote((e.target as HTMLTextAreaElement).value)} />
+      <input
+        id="nameIn"
+        type="text"
+        placeholder="Nazwa, np. Polana nad Odrą"
+        value={name}
+        onInput={(e) => setName((e.target as HTMLInputElement).value)}
+      />
+      <textarea
+        id="noteIn"
+        rows={3}
+        placeholder="Notatka: dojazd, pora dnia, na co uważać"
+        value={note}
+        onInput={(e) => setNote((e.target as HTMLTextAreaElement).value)}
+      />
       <CatSeg id="editCat" value={cat} onPick={setCat} />
       <div class="meta-line">
         {place.addr ? (

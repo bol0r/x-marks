@@ -88,7 +88,6 @@ export function PasteSheet({ cat, prefill }: { cat: Cat | null; prefill: string 
       ctrl.current?.abort();
     };
     // sprawdzenie raz przy otwarciu; wartość bierzemy z pola, żeby nie nadpisać wpisu
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

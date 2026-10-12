@@ -67,7 +67,9 @@ function Tile({ p }: { p: Place }) {
   const sub = fix ? fmtDist(dist(fix, p)) : fmtWhen(p.ts);
   return (
     <button type="button" class="tile" style={`--c:var(${CATS[p.cat].color})`} data-id={p.id}>
-      {p.photo ? <Photo id={p.id} /> : (
+      {p.photo ? (
+        <Photo id={p.id} />
+      ) : (
         <span class="ph">
           <CatIcon cat={p.cat} />
         </span>
@@ -209,9 +211,7 @@ export function PlaceList() {
       ) : (
         <>
           {!swipedOnce.value && (
-            <p class="hint swipe-hint">
-              ← {filter.value === "arch" ? "przywróć" : "do archiwum"} · przesuń kartę · usuń →
-            </p>
+            <p class="hint swipe-hint">← {filter.value === "arch" ? "przywróć" : "do archiwum"} · przesuń kartę · usuń →</p>
           )}
           {items.map((p) => (
             <Card key={p.id} p={p} />

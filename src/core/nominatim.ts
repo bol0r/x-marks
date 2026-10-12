@@ -41,9 +41,7 @@ const cache = new Map<string, GeoHit | null>();
 let chain: Promise<void> = Promise.resolve();
 
 function gap(): Promise<void> {
-  const run = chain.then(
-    () => new Promise<void>((resolve) => setTimeout(resolve, 1100)),
-  );
+  const run = chain.then(() => new Promise<void>((resolve) => setTimeout(resolve, 1100)));
   chain = run.then(
     () => undefined,
     () => undefined,

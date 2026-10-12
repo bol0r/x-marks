@@ -19,8 +19,7 @@ export function planImport(existing: Place[], data: unknown): ImportPlan {
   const rec = (data && typeof data === "object" ? data : {}) as { places?: unknown; photos?: unknown };
   const arr = Array.isArray(data) ? data : Array.isArray(rec.places) ? rec.places : null;
   if (!arr) throw new Error("format");
-  const photos =
-    rec.photos && typeof rec.photos === "object" ? (rec.photos as Record<string, string>) : ({} as Record<string, string>);
+  const photos = rec.photos && typeof rec.photos === "object" ? (rec.photos as Record<string, string>) : ({} as Record<string, string>);
   const ids = new Set(existing.map((p) => p.id));
   const added: Place[] = [];
   const photoPlan: BackupPhoto[] = [];

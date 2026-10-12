@@ -6,9 +6,12 @@ export function Splash() {
   const out = useSignal(false);
   useEffect(() => {
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const t = window.setTimeout(() => {
-      out.value = true;
-    }, reduce ? 1100 : 2100);
+    const t = window.setTimeout(
+      () => {
+        out.value = true;
+      },
+      reduce ? 1100 : 2100,
+    );
     return () => window.clearTimeout(t);
   }, []);
   useEffect(() => {

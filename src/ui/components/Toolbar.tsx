@@ -17,13 +17,7 @@ export function Toolbar() {
     <>
       <div class="tools" role="toolbar" aria-label="Kategorie">
         {FILTERS.map((f) => (
-          <button
-            type="button"
-            class="chip"
-            data-f={f.id}
-            aria-pressed={filter.value === f.id}
-            onClick={() => setFilter(f.id)}
-          >
+          <button type="button" class="chip" data-f={f.id} aria-pressed={filter.value === f.id} onClick={() => setFilter(f.id)}>
             {f.cat && <i style={`--c:var(${CATS[f.cat].color})`} />}
             {f.label}
             <span class="n" id={"n-" + f.id}>
@@ -61,7 +55,14 @@ export function Toolbar() {
           ))}
         </div>
         <span class="spacer" />
-        <button type="button" class="ghost" id="sortBtn" hidden={!(lastFix.value && places.value.length)} aria-pressed={sortNear.value} onClick={toggleSort}>
+        <button
+          type="button"
+          class="ghost"
+          id="sortBtn"
+          hidden={!(lastFix.value && places.value.length)}
+          aria-pressed={sortNear.value}
+          onClick={toggleSort}
+        >
           Najbliżej
         </button>
         <button type="button" class="ghost" id="pasteBtn" onClick={() => openPaste()}>

@@ -28,7 +28,7 @@ const cases: [string, string][] = [
   ["https://www.google.com/maps/search/51.10994,+17.03203?entry=tts", "link Google Maps"],
   ["https://maps.apple.com/?ll=51.10994,17.03203&q=Pin", "link z mapy"],
   ["geo:51.10994,17.03203", "link geo:"],
-  ['51°06\'35.8"N 17°01\'55.3"E', "stopnie/minuty"],
+  ["51°06'35.8\"N 17°01'55.3\"E", "stopnie/minuty"],
   ["51.10994, 17.03203", "współrzędne"],
   ["51,10994 17,03203", "współrzędne"],
 ];

@@ -15,7 +15,15 @@ export function DronIcon() {
 
 export function ChillIcon() {
   return (
-    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <svg
+      viewBox="0 0 32 32"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
       <path d="M4 22c4-3 8-3 12 0s8 3 12 0" />
       <path d="M16 4l-6 12h12z" />
       <path d="M16 16v3" />
@@ -25,7 +33,15 @@ export function ChillIcon() {
 
 export function CozyIcon() {
   return (
-    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <svg
+      viewBox="0 0 32 32"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
       <path d="M6 13h17v7a7 7 0 0 1-7 7h-3a7 7 0 0 1-7-7z" />
       <path d="M23 15h2a3 3 0 0 1 0 6h-2" />
       <path d="M11 4c0 2 2 2 2 4M16 4c0 2 2 2 2 4" />
