@@ -153,6 +153,13 @@ h1 svg path {
 .chip.arch {
   border-style: dashed;
 }
+.searchbar {
+  padding-bottom: 0;
+}
+#search {
+  flex: 1 1 100%;
+  width: 100%;
+}
 .tagbar {
   padding-top: 0;
 }

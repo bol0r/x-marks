@@ -119,7 +119,7 @@ public/        icons, manifest
 - [x] **Więcej zdjęć.** Galeria do 6 zdjęć na miejsce, pierwsze = okładka, przeciąganie kolejności. Gotowe gdy: kafelek pokazuje okładkę, edycja galerię.
 - [x] **Własne kategorie.** Do 6 kategorii: nazwa, kolor z palety tokenów, ikona z zestawu. Pieczątki na dole biorą 3 ulubione. Gotowe gdy: dodanie kategorii „Widok” działa w filtrach, kafelkach, mapie i eksporcie.
 - [x] **Tagi i ocena.** Ocena 1–3 X, tagi (np. „parking”, „woda”, „zachód słońca”). Filtr po tagach. Gotowe gdy: filtr „woda + 3X” zwraca właściwe miejsca.
-- [ ] **Wyszukiwarka.** Pole szukania po nazwie, notatce, adresie i tagach (bez polskich znaków też: „lakowa” → „łąkowa”). Gotowe gdy: działa offline.
+- [x] **Wyszukiwarka.** Pole szukania po nazwie, notatce, adresie i tagach (bez polskich znaków też: „lakowa” → „łąkowa”). Gotowe gdy: działa offline.
 - [ ] **Offline mapa okolicy.** Przycisk „Zapisz mapę okolicy” cache’uje kafelki w promieniu ~10 km od zapisanych miejsc (limit MB, licznik). Gotowe gdy: w trybie samolotowym mapa się wyświetla.
 
 ### Faza 2 — Dron Ops (najmocniejsza funkcja)

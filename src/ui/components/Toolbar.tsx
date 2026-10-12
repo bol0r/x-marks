@@ -1,6 +1,6 @@
 import { catalog } from "../../core/cats";
-import { setFilter, setStarFilter, setTagFilter, setViewMode, toggleSort, openPaste, openData, openRadar } from "../controller";
-import { catRev, coach, counts, filter, lastFix, places, sortNear, starFilter, tagFilter, view } from "../state";
+import { setFilter, setQuery, setStarFilter, setTagFilter, setViewMode, toggleSort, openPaste, openData, openRadar } from "../controller";
+import { catRev, coach, counts, filter, lastFix, places, query, sortNear, starFilter, tagFilter, view } from "../state";
 
 export function Toolbar() {
   const c = counts.value;
@@ -12,6 +12,16 @@ export function Toolbar() {
   ];
   return (
     <>
+      <div class="tools searchbar">
+        <input
+          id="search"
+          type="text"
+          placeholder="Szukaj nazwy, notatki, adresu"
+          aria-label="Szukaj"
+          value={query.value}
+          onInput={(e) => setQuery((e.target as HTMLInputElement).value)}
+        />
+      </div>
       <div class="tools" id="filters" data-coach="filters" data-rev={catRev.value} role="toolbar" aria-label="Kategorie">
         {filters.map((f) => (
           <button type="button" class="chip" data-f={f.id} aria-pressed={filter.value === f.id} onClick={() => setFilter(f.id)}>
