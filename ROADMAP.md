@@ -120,7 +120,7 @@ public/        icons, manifest
 - [x] **Własne kategorie.** Do 6 kategorii: nazwa, kolor z palety tokenów, ikona z zestawu. Pieczątki na dole biorą 3 ulubione. Gotowe gdy: dodanie kategorii „Widok” działa w filtrach, kafelkach, mapie i eksporcie.
 - [x] **Tagi i ocena.** Ocena 1–3 X, tagi (np. „parking”, „woda”, „zachód słońca”). Filtr po tagach. Gotowe gdy: filtr „woda + 3X” zwraca właściwe miejsca.
 - [x] **Wyszukiwarka.** Pole szukania po nazwie, notatce, adresie i tagach (bez polskich znaków też: „lakowa” → „łąkowa”). Gotowe gdy: działa offline.
-- [ ] **Offline mapa okolicy.** Przycisk „Zapisz mapę okolicy” cache’uje kafelki w promieniu ~10 km od zapisanych miejsc (limit MB, licznik). Gotowe gdy: w trybie samolotowym mapa się wyświetla.
+- [x] **Offline mapa okolicy.** Przycisk „Zapisz mapę okolicy” cache’uje kafelki w promieniu ~10 km od zapisanych miejsc (limit MB, licznik). Gotowe gdy: w trybie samolotowym mapa się wyświetla.
 
 ### Faza 2 — Dron Ops (najmocniejsza funkcja)
 - [ ] **Pogoda dronowa.** Dla miejsc Dron: wiatr i porywy na 10 m, 80 m, 120 m, opady, chmury, widzialność, temperatura (Open-Meteo, bez klucza). Gotowe gdy: karta pokazuje dane na teraz i +6 h, z cache 30 min.

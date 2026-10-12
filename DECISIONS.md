@@ -1,5 +1,6 @@
 # Decyzje agenta
 
+- Kafelki okolicy (około 10 km, zoom 12–14) lądują w osobnej bazie `xmarks-map` z limitem 40 MB; w trybie samolotowym mapa bierze je stamtąd, a miejsca zostają w `xmarks-db`.
 - Szukanie składa polskie znaki na telefonie (także „ł” → „l”) i patrzy w nazwę, notatkę, adres i tagi, bez sieci.
 - Tagi i ocena 0–3 siedzą na miejscu; migracja Dexie v4 dopisuje puste tagi i zero X, filtr tagu jest dokładny bez wielkości liter, a kopia JSON niesie oba pola.
 - Własne kategorie są w meta Dexie (do 6 razem z Dron/Chill/Cozy, kolor tylko z tokenów); pieczątki to trzy ulubione, a kopia JSON dopisuje nowe kategorie i nadal wczytuje stary plik bez nich.

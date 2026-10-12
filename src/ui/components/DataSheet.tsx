@@ -1,7 +1,19 @@
 import { useState } from "preact/hooks";
 import { catalog, ICONS, PALETTE } from "../../core/cats";
-import { addCategory, closeSheet, copyJSON, downloadGPX, lastBackupTxt, replayCoach, runBackup, runImport, toggleFav } from "../controller";
-import { catRev, places } from "../state";
+import { fmtMapSize, MAP_LIMIT_BYTES } from "../../core/offline-map";
+import {
+  addCategory,
+  closeSheet,
+  copyJSON,
+  downloadGPX,
+  lastBackupTxt,
+  replayCoach,
+  runBackup,
+  runImport,
+  saveOfflineMap,
+  toggleFav,
+} from "../controller";
+import { catRev, mapBytes, places } from "../state";
 import { IconArt } from "./Icons";
 import { Sheet } from "./Sheet";
 
@@ -103,10 +115,16 @@ export function DataSheet() {
         <button type="button" class="btn" data-a="copy" onClick={() => void copyJSON(setMsg)}>
           Kopiuj JSON
         </button>
+        <button type="button" class="btn" id="saveMap" onClick={() => void saveOfflineMap(setMsg)}>
+          Zapisz mapę okolicy
+        </button>
         <button type="button" class="btn" data-a="coach" onClick={replayCoach}>
           Pokaż samouczek
         </button>
       </div>
+      <p id="mapUsage">
+        Mapa okolicy: {fmtMapSize(mapBytes.value)} / {fmtMapSize(MAP_LIMIT_BYTES)}
+      </p>
       <div class="msg" id="dataMsg" hidden={!msg}>
         {msg}
       </div>
