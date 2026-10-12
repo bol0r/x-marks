@@ -1,4 +1,6 @@
 import { CATS } from "../core/cats";
+import { COACH_STEPS, COACH_VERSION, stepsFor } from "../core/coach";
+import { readCoach, writeCoachVersion } from "../data/coach";
 import { fmtWhen } from "../core/geo";
 import { titleOf } from "../core/format";
 import { toGPX } from "../core/format";
@@ -10,6 +12,7 @@ import type { Cat, Fix, Place } from "../core/types";
 import { dropPhotoURL, pickFile, shrink } from "./photos";
 import {
   busyCat,
+  coach,
   filter,
   fixRev,
   gpsHint,
@@ -286,8 +289,41 @@ export async function addAtHere(cat: Cat) {
   }
 }
 
+let coachWrite: Promise<void> | null = null;
+
+export function finishCoach(): Promise<void> {
+  if (!coach.value) return coachWrite ?? Promise.resolve();
+  if (coachWrite) return coachWrite;
+  coachWrite = (async () => {
+    try {
+      await writeCoachVersion(COACH_VERSION);
+    } finally {
+      coach.value = null;
+      coachWrite = null;
+    }
+  })();
+  return coachWrite;
+}
+
+export function replayCoach() {
+  closeSheet();
+  coach.value = { steps: stepsFor(null, COACH_STEPS, COACH_VERSION, true), index: 0 };
+}
+
+export function coachGo(delta: number) {
+  const current = coach.value;
+  if (!current) return;
+  if (delta > 0 && current.index >= current.steps.length - 1) {
+    void finishCoach();
+    return;
+  }
+  const index = Math.max(0, current.index + delta);
+  coach.value = { steps: current.steps, index };
+}
+
 export async function onPad(cat: Cat) {
   await readyGate;
+  if (coach.value) void finishCoach();
   if (gpsOk.value === false) openPaste(cat);
   else await addAtHere(cat);
 }
@@ -551,6 +587,15 @@ export async function boot() {
   }
   ready.value = true;
   openGate();
+  if (!pendingHash && !sharedText) {
+    try {
+      const record = await readCoach();
+      const steps = stepsFor(record, COACH_STEPS, COACH_VERSION);
+      if (steps.length) coach.value = { steps, index: 0 };
+    } catch {
+      coach.value = { steps: [...COACH_STEPS], index: 0 };
+    }
+  }
   try {
     await navigator.storage?.persist?.();
   } catch {

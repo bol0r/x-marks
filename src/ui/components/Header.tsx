@@ -21,7 +21,7 @@ export function Header() {
         </svg>
         Marks
       </h1>
-      <div class="gps" id="gps" aria-live="polite">
+      <div class="gps" id="gps" data-coach="gps" aria-live="polite">
         <i class={gpsState.value ? `dot ${gpsState.value}` : "dot"} id="gpsDot" />
         <span id="gpsTxt">
           {showFix && fix ? (

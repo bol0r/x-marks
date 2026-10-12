@@ -5,17 +5,54 @@ import { navUrl, shareText, titleOf } from "../../core/format";
 import { olcEncode } from "../../core/olc";
 import type { Place } from "../../core/types";
 import { archive, copyText, markSwipedOnce, openEdit, removePlace } from "../controller";
-import { filter, lastFix, places, ready, shown, swipedOnce, view } from "../state";
+import { coach, filter, lastFix, places, ready, showSplash, shown, swipedOnce, view } from "../state";
 import { EmptyAll, EmptyFilter } from "./Empty";
 import { CatIcon } from "./Icons";
 import { Photo } from "./Photo";
 
-function Card({ p }: { p: Place }) {
+function coachOnCard() {
+  const session = coach.value;
+  if (!session || showSplash.value) return false;
+  return session.steps[session.index]?.target === "card";
+}
+
+function Hand() {
+  return (
+    <span class="coach-hand" aria-hidden="true">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 14V7.5a1.8 1.8 0 0 1 3.6 0V14" />
+        <path d="M14.6 13.2V6.2a1.8 1.8 0 0 1 3.6 0v8" />
+        <path d="M18.2 13V8.2a1.8 1.8 0 0 1 3.6 0V16" />
+        <path d="M11 14.5c-1.6.2-3.2 1.6-3.2 3.6v1.4c0 5 3.4 8.5 8.4 8.5h2.2c4.2 0 7.6-2.8 8.2-6.6l.8-5.2a1.8 1.8 0 0 0-3.5-.8" />
+      </svg>
+    </span>
+  );
+}
+
+function ExampleCard() {
+  return (
+    <div class="sw" data-id="example" data-example="1" data-coach="card">
+      <article class="item" style="--c:var(--chill)">
+        <div style="min-width:0">
+          <div class="top">
+            <span class="cat">Chill</span>
+            <span class="example-flag">przykład</span>
+          </div>
+          <p class="name">Polana nad wodą</p>
+          <p class="sub">Przesuń w lewo albo w prawo</p>
+        </div>
+        <Hand />
+      </article>
+    </div>
+  );
+}
+
+function Card({ p, marked }: { p: Place; marked?: boolean }) {
   const fix = lastFix.value;
   const distBit = fix ? fmtDist(dist(fix, p)) : "";
   const addrBit = p.name && p.addr ? p.addr : "";
   return (
-    <div class="sw" data-id={p.id}>
+    <div class="sw" data-id={p.id} data-coach={marked ? "card" : undefined}>
       <i class="xm" style={`--c:var(${CATS[p.cat].color})`}>
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M5 5L19 19M19 5L5 19" />
@@ -57,6 +94,7 @@ function Card({ p }: { p: Place }) {
           </div>
         </div>
         {p.photo ? <Photo id={p.id} class="thumb" /> : null}
+        {marked ? <Hand /> : null}
       </article>
     </div>
   );
@@ -165,6 +203,14 @@ export function PlaceList() {
       }, 60);
       s.card.classList.remove("dragging");
       const w = s.wrap.offsetWidth;
+      if (s.wrap.dataset.example) {
+        s.card.style.transform = "";
+        window.setTimeout(() => {
+          delete s.wrap.dataset.dir;
+          s.wrap.classList.remove("armed");
+        }, 200);
+        return;
+      }
       if (Math.abs(s.dx) > w * 0.3) {
         s.card.style.transform = `translateX(${s.dx < 0 ? -w : w}px)`;
         s.wrap.classList.add("gone");
@@ -200,9 +246,15 @@ export function PlaceList() {
 
   const items = shown.value;
   const mode = view.value === "tiles" ? "tiles" : "list";
+  const demo = coachOnCard() && view.value === "list";
   return (
     <div ref={ref} id="items" class={mode} hidden={view.value === "map"}>
-      {!ready.value ? null : !places.value.length ? (
+      {!ready.value ? null : demo && !items.length ? (
+        <>
+          <p class="hint swipe-hint">← do archiwum · przesuń kartę · usuń →</p>
+          <ExampleCard />
+        </>
+      ) : !places.value.length ? (
         <EmptyAll />
       ) : !items.length ? (
         <EmptyFilter />
@@ -213,8 +265,8 @@ export function PlaceList() {
           {!swipedOnce.value && (
             <p class="hint swipe-hint">← {filter.value === "arch" ? "przywróć" : "do archiwum"} · przesuń kartę · usuń →</p>
           )}
-          {items.map((p) => (
-            <Card key={p.id} p={p} />
+          {items.map((p, i) => (
+            <Card key={p.id} p={p} marked={demo && i === 0} />
           ))}
         </>
       )}

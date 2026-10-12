@@ -18,6 +18,7 @@
   --shade: #000;
   --paper-shine: rgba(255, 255, 255, 0.4);
   --veil: rgba(8, 12, 16, 0.45);
+  --coach-veil: rgba(29, 41, 53, 0.55);
   --on-photo: #fff;
   --on-photo-soft: rgba(255, 255, 255, 0.85);
   --scrim-clear: rgba(10, 14, 20, 0);
@@ -78,6 +79,7 @@
     --on-cat: #0d1820;
     --contour: rgba(140, 200, 220, 0.075);
     --shadow: rgba(0, 0, 0, 0.5);
+    --coach-veil: rgba(4, 8, 12, 0.72);
     color-scheme: dark;
   }
 }
@@ -98,5 +100,6 @@
   --on-cat: #0d1820;
   --contour: rgba(140, 200, 220, 0.075);
   --shadow: rgba(0, 0, 0, 0.5);
+  --coach-veil: rgba(4, 8, 12, 0.72);
   color-scheme: dark;
 }
