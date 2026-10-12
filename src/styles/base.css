@@ -153,6 +153,55 @@ h1 svg path {
 .chip.arch {
   border-style: dashed;
 }
+.tagbar {
+  padding-top: 0;
+}
+#tagFilter {
+  flex: 1;
+  min-width: 8rem;
+  width: auto;
+  font-size: 13px;
+  padding: var(--s-4) var(--s-6);
+}
+.stars {
+  display: flex;
+  gap: var(--s-3);
+  margin-top: var(--s-4);
+}
+.stars button {
+  font: 700 16px var(--display);
+  letter-spacing: 0.04em;
+  border: 1.5px dashed var(--line);
+  background: var(--paper);
+  color: var(--muted);
+  border-radius: var(--r-md);
+  min-width: 44px;
+  min-height: 44px;
+  cursor: pointer;
+}
+.stars button[aria-pressed="true"] {
+  color: var(--mark);
+  border-color: var(--mark);
+  background: color-mix(in srgb, var(--mark) 16%, var(--paper));
+}
+.marks {
+  font: 700 13px var(--display);
+  letter-spacing: 0.08em;
+  color: var(--mark);
+}
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-3);
+  margin-top: var(--s-3);
+}
+.tag {
+  font: 600 12px var(--body);
+  color: var(--fg);
+  border: 1px dashed var(--line);
+  border-radius: var(--r-pill);
+  padding: 2px var(--s-4);
+}
 .spacer {
   flex: 1;
 }
@@ -1077,10 +1126,14 @@ input[type="text"]:focus {
   gap: var(--s-5);
   align-items: stretch;
 }
-.inrow textarea {
+.inrow textarea,
+.inrow input[type="text"] {
   flex: 1;
   min-width: 0;
   width: auto;
+}
+.item .top .marks {
+  margin-right: auto;
 }
 .cover {
   position: relative;

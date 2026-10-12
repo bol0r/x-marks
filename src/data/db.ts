@@ -67,6 +67,17 @@ export class XMarksDB extends Dexie {
             if (typeof row.ord !== "number") row.ord = 0;
           });
       });
+    this.version(4)
+      .stores(stores("id, placeId, ord"))
+      .upgrade(async (tx) => {
+        await tx
+          .table("places")
+          .toCollection()
+          .modify((place: Place) => {
+            if (!Array.isArray(place.tags)) place.tags = [];
+            if (typeof place.stars !== "number") place.stars = 0;
+          });
+      });
   }
 }
 

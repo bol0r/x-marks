@@ -1,5 +1,6 @@
 # Zmiany
 
+- Faza 1 — tagi i ocena: filtr „woda” i 3X zostawia tylko miejsca z tym tagiem i trzema X.
 - Faza 1 — własne kategorie: do sześciu, kolor z tokenów, a „Widok” działa w filtrze, kafelku, mapie i kopii.
 - Faza 1 — więcej zdjęć: galeria do 6, pierwsze jest okładką kafelka, kolejność da się przeciągnąć.
 - Faza 1 — notatka głosowa: mikrofon w dymku i edycji dopisuje tekst po polsku, a gdy brak Web Speech, przycisk znika.

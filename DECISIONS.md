@@ -1,5 +1,6 @@
 # Decyzje agenta
 
+- Tagi i ocena 0–3 siedzą na miejscu; migracja Dexie v4 dopisuje puste tagi i zero X, filtr tagu jest dokładny bez wielkości liter, a kopia JSON niesie oba pola.
 - Własne kategorie są w meta Dexie (do 6 razem z Dron/Chill/Cozy, kolor tylko z tokenów); pieczątki to trzy ulubione, a kopia JSON dopisuje nowe kategorie i nadal wczytuje stary plik bez nich.
 - Galeria trzyma do 6 zdjęć w Dexie (`placeId` i `ord`); migracja v3 dopisuje starym zdjęciom kolejność 0, a kopia JSON niesie całą galerię i nadal wczytuje stary plik z jednym zdjęciem.
 - Notatka głosowa używa Web Speech API `pl-PL` bez dodatkowej biblioteki; w dymku dopisuje się od razu do miejsca, w edycji do pola notatki, a brak API chowa przycisk.

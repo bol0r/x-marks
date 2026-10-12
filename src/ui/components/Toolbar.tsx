@@ -1,6 +1,6 @@
 import { catalog } from "../../core/cats";
-import { setFilter, setViewMode, toggleSort, openPaste, openData, openRadar } from "../controller";
-import { catRev, coach, counts, filter, lastFix, places, sortNear, view } from "../state";
+import { setFilter, setStarFilter, setTagFilter, setViewMode, toggleSort, openPaste, openData, openRadar } from "../controller";
+import { catRev, coach, counts, filter, lastFix, places, sortNear, starFilter, tagFilter, view } from "../state";
 
 export function Toolbar() {
   const c = counts.value;
@@ -36,6 +36,26 @@ export function Toolbar() {
             {c.arch}
           </span>
         </button>
+      </div>
+      <div class="tools tagbar" id="tagBar" role="toolbar" aria-label="Tagi i ocena">
+        <input
+          id="tagFilter"
+          type="text"
+          placeholder="Tag, np. woda"
+          value={tagFilter.value}
+          onInput={(e) => setTagFilter((e.target as HTMLInputElement).value)}
+        />
+        {[1, 2, 3].map((n) => (
+          <button
+            type="button"
+            class="chip"
+            data-stars={n}
+            aria-pressed={starFilter.value === n}
+            onClick={() => setStarFilter(starFilter.value === n ? 0 : n)}
+          >
+            {n}X
+          </button>
+        ))}
       </div>
       <div class="tools" role="toolbar" aria-label="Widok" style="padding-top:0">
         <div class="vseg" id="viewSeg" data-coach="view">

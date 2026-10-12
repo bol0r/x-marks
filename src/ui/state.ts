@@ -2,6 +2,7 @@ import { computed, signal } from "@preact/signals";
 import type { CoachStep } from "../core/coach";
 import type { Cat, Filter, Fix, Place, View } from "../core/types";
 import { dist } from "../core/geo";
+import { placeMatches } from "../core/tags";
 import { dexieReadyFlag, loadBackupStamp, loadPlacesSync, loadSwiped, loadView } from "../data/legacy";
 
 const hasStore = typeof localStorage !== "undefined";
@@ -52,10 +53,15 @@ export interface CoachSession {
 export const coach = signal<CoachSession | null>(null);
 export const showRadar = signal(false);
 export const catRev = signal(0);
+export const tagFilter = signal("");
+export const starFilter = signal(0);
 
 export const shown = computed(() => {
   const f = filter.value;
   let arr = f === "arch" ? places.value.filter((p) => p.archived) : places.value.filter((p) => !p.archived && (f === "all" || p.cat === f));
+  const tag = tagFilter.value;
+  const stars = starFilter.value;
+  if (tag.trim() || stars > 0) arr = arr.filter((p) => placeMatches(p, tag, stars));
   const fix = lastFix.value;
   if (sortNear.value && fix) arr = arr.slice().sort((a, b) => dist(fix, a) - dist(fix, b));
   return arr;
