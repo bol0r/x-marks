@@ -9,6 +9,7 @@ import { catRev, coach, filter, lastFix, places, ready, showSplash, shown, swipe
 import { EmptyAll, EmptyFilter } from "./Empty";
 import { CatIcon } from "./Icons";
 import { Photo } from "./Photo";
+import { DroneWeather } from "./Weather";
 
 function coachOnCard() {
   const session = coach.value;
@@ -98,6 +99,7 @@ function Card({ p, marked }: { p: Place; marked?: boolean }) {
               ))}
             </div>
           ) : null}
+          {p.cat === "dron" ? <DroneWeather lat={p.lat} lng={p.lng} /> : null}
           <div class="acts">
             <a href={navUrl(p)} target="_blank" rel="noopener">
               Prowadź
