@@ -1,4 +1,5 @@
 import { CATS } from "../core/cats";
+import { motionFromFix } from "../core/motion";
 import { COACH_STEPS, COACH_VERSION, stepsFor } from "../core/coach";
 import { readCoach, writeCoachVersion } from "../data/coach";
 import { fmtWhen } from "../core/geo";
@@ -168,6 +169,7 @@ function savedToast(p: Place) {
 
 export async function addPlace(cat: Cat, lat: number, lng: number, acc: number | null, src: string, name?: string) {
   await readyGate;
+  const motion = src === "gps" ? motionFromFix(lastFix.value?.speed, lastFix.value?.heading) : null;
   const p: Place = {
     id: uid(),
     cat,
@@ -179,6 +181,7 @@ export async function addPlace(cat: Cat, lat: number, lng: number, acc: number |
     note: "",
     addr: "",
     src: src || "gps",
+    ...(motion ? { speed: motion.speed, heading: motion.heading, approx: true } : {}),
   };
   places.value = [p, ...places.value];
   await persist();
@@ -209,13 +212,26 @@ export async function geocodeQuery(parts: string[], signal: AbortSignal) {
   return geocode(parts, refPoint(), signal);
 }
 
+export async function correctPlace(id: string, lat: number, lng: number) {
+  await readyGate;
+  if (!places.value.some((p) => p.id === id)) return;
+  replacePlace(id, { lat: +(+lat).toFixed(6), lng: +(+lng).toFixed(6), approx: false });
+  await persist();
+  const saved = places.value.find((p) => p.id === id);
+  if (saved) void reverse(saved);
+}
+
 function onFix(pos: GeolocationPosition) {
   const first = !lastFix.value;
+  const speed = pos.coords.speed;
+  const heading = pos.coords.heading;
   const fix: Fix = {
     lat: pos.coords.latitude,
     lng: pos.coords.longitude,
     acc: Math.round(pos.coords.accuracy),
     t: Date.now(),
+    speed: typeof speed === "number" && Number.isFinite(speed) ? speed : null,
+    heading: typeof heading === "number" && Number.isFinite(heading) ? heading : null,
   };
   lastFix.value = fix;
   gpsOk.value = true;

@@ -1,5 +1,6 @@
 # Decyzje agenta
 
+- Zapis powyżej 30 km/h trzyma prędkość w km/h, kurs i znacznik przybliżenia; po przesunięciu pinezki znacznik schodzi, a adres jest szukany od nowa. Migracja Dexie v2 dopisuje starym miejscom `approx: false` i niczego nie usuwa.
 - Radar liczy azymut na telefonie i obraca strzałkę o różnicę azymutu oraz kompasu; na iOS kompas rusza dopiero po „Włącz kompas”, a Wake Lock trzyma ekran tylko gdy radar jest otwarty.
 - Samouczek zapisuje w Dexie (`meta`, klucz `coach`, `{version}`) ostatnią obejrzaną wersję kroków, a gdy IndexedDB padnie — w localStorage, żeby po przeładowaniu nie wracał.
 - Jakość: ESLint i Prettier w `npm run lint`, `tsc --noEmit` w CI, a service worker rejestruje się też na localhost, bo Lighthouse PWA na podglądzie dostał 100, a paczka startowa ma 58 KB gzip.

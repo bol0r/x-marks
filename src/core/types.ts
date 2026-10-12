@@ -13,6 +13,12 @@ export interface Place {
   src: string;
   photo?: boolean;
   archived?: boolean;
+  /** km/h, tylko gdy zapis w ruchu. */
+  speed?: number | null;
+  /** stopnie, 0 = północ. */
+  heading?: number | null;
+  /** true, gdy zapisano powyżej 30 km/h i pozycja czeka na poprawkę. */
+  approx?: boolean;
 }
 
 export interface Fix {
@@ -20,6 +26,9 @@ export interface Fix {
   lng: number;
   acc: number;
   t: number;
+  /** m/s z GPS, jeśli telefon je podał. */
+  speed?: number | null;
+  heading?: number | null;
 }
 
 export interface PlaceQuery {

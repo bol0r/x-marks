@@ -69,6 +69,7 @@ function Card({ p, marked }: { p: Place; marked?: boolean }) {
             <span class="when">{fmtWhen(p.ts)}</span>
           </div>
           <p class="name">{titleOf(p)}</p>
+          {p.approx ? <p class="check-flag">do sprawdzenia</p> : null}
           {(distBit || addrBit) && (
             <p class="sub">
               {distBit && <b>{distBit}</b>}
