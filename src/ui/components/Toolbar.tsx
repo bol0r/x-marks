@@ -1,7 +1,7 @@
 import { CATS } from "../../core/cats";
 import type { Cat, Filter } from "../../core/types";
 import { setFilter, setViewMode, toggleSort, openPaste, openData } from "../controller";
-import { counts, filter, lastFix, places, sortNear, view } from "../state";
+import { coach, counts, filter, lastFix, places, sortNear, view } from "../state";
 
 const FILTERS: { id: Filter; label: string; cat?: Cat }[] = [
   { id: "all", label: "Wszystkie" },
@@ -12,10 +12,11 @@ const FILTERS: { id: Filter; label: string; cat?: Cat }[] = [
 
 export function Toolbar() {
   const c = counts.value;
-  const archHidden = !c.arch && filter.value !== "arch";
+  const revealArch = coach.value?.steps[coach.value.index]?.target === "filters";
+  const archHidden = !c.arch && filter.value !== "arch" && !revealArch;
   return (
     <>
-      <div class="tools" role="toolbar" aria-label="Kategorie">
+      <div class="tools" id="filters" data-coach="filters" role="toolbar" aria-label="Kategorie">
         {FILTERS.map((f) => (
           <button type="button" class="chip" data-f={f.id} aria-pressed={filter.value === f.id} onClick={() => setFilter(f.id)}>
             {f.cat && <i style={`--c:var(${CATS[f.cat].color})`} />}
@@ -41,7 +42,7 @@ export function Toolbar() {
         </button>
       </div>
       <div class="tools" role="toolbar" aria-label="Widok" style="padding-top:0">
-        <div class="vseg" id="viewSeg">
+        <div class="vseg" id="viewSeg" data-coach="view">
           {(
             [
               ["list", "Lista"],
@@ -65,10 +66,10 @@ export function Toolbar() {
         >
           Najbliżej
         </button>
-        <button type="button" class="ghost" id="pasteBtn" onClick={() => openPaste()}>
+        <button type="button" class="ghost" id="pasteBtn" data-coach="paste" onClick={() => openPaste()}>
           Dodaj
         </button>
-        <button type="button" class="ghost" id="moreBtn" onClick={openData}>
+        <button type="button" class="ghost" id="moreBtn" data-coach="data" onClick={openData}>
           Dane
         </button>
       </div>

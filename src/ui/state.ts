@@ -1,4 +1,5 @@
 import { computed, signal } from "@preact/signals";
+import type { CoachStep } from "../core/coach";
 import type { Cat, Filter, Fix, Place, View } from "../core/types";
 import { dist } from "../core/geo";
 import { dexieReadyFlag, loadBackupStamp, loadPlacesSync, loadSwiped, loadView } from "../data/legacy";
@@ -41,6 +42,13 @@ export const toast = signal<ToastModel | null>(null);
 export type SheetModel = { kind: "edit"; id: string } | { kind: "paste"; cat: Cat | null; prefill: string } | { kind: "data" };
 
 export const sheet = signal<SheetModel | null>(null);
+
+export interface CoachSession {
+  steps: CoachStep[];
+  index: number;
+}
+
+export const coach = signal<CoachSession | null>(null);
 
 export const shown = computed(() => {
   const f = filter.value;

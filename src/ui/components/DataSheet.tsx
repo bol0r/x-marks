@@ -1,5 +1,5 @@
 import { useState } from "preact/hooks";
-import { closeSheet, copyJSON, downloadGPX, lastBackupTxt, runBackup, runImport } from "../controller";
+import { closeSheet, copyJSON, downloadGPX, lastBackupTxt, replayCoach, runBackup, runImport } from "../controller";
 import { places } from "../state";
 import { Sheet } from "./Sheet";
 
@@ -42,6 +42,9 @@ export function DataSheet() {
         </button>
         <button type="button" class="btn" data-a="copy" onClick={() => void copyJSON(setMsg)}>
           Kopiuj JSON
+        </button>
+        <button type="button" class="btn" data-a="coach" onClick={replayCoach}>
+          Pokaż samouczek
         </button>
       </div>
       <div class="msg" id="dataMsg" hidden={!msg}>

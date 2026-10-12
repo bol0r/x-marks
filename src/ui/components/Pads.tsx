@@ -8,7 +8,7 @@ const CATS_ORDER: Cat[] = ["dron", "chill", "cozy"];
 
 export function Pads() {
   return (
-    <nav class="pads" aria-label="Zapisz miejsce, w którym jesteś">
+    <nav class="pads" data-coach="pads" aria-label="Zapisz miejsce, w którym jesteś">
       {CATS_ORDER.map((cat) => (
         <button
           type="button"

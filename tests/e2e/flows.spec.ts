@@ -22,6 +22,10 @@ async function openApp(page: Page) {
   const splash = page.locator("#splash");
   await splash.click();
   await splash.waitFor({ state: "detached" });
+  const coach = page.locator("#coach");
+  await expect(coach).toBeVisible();
+  await coach.getByRole("button", { name: "Pomiń" }).click();
+  await expect(coach).toHaveCount(0);
   await expect(page.locator('button.pad[data-cat="dron"]')).toBeEnabled();
   await noScroll(page);
   return dialogs;

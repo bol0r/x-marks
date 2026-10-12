@@ -93,6 +93,25 @@ public/        icons, manifest
 - [x] **Jakość.** ESLint + Prettier, `tsc --noEmit` w CI, Lighthouse PWA ≥ 90, bundle startowy < 120 KB gzip (mapa ładowana leniwie).
 
 ### Faza 1 — Teren i auto
+- [x] Samouczek (coach marks). Po pierwszym uruchomieniu, zaraz po ekranie startowym, ekran przygasa,
+  a podświetlony zostaje tylko jeden element (wycięcie w przyciemnieniu, przerywana ramka w kolorze --mark).
+  Obok dymek w stylu mapy skarbów: ikonka, krótki tytuł, 1–2 zdania po polsku, kropki postępu (np. 3/7),
+  przyciski Wstecz / Dalej / Pomiń. Kroki:
+  1) pieczątki Dron/Chill/Cozy: zapis jednym stuknięciem, pozycja i godzina same,
+  2) status GPS w nagłówku,
+  3) Dodaj: wklej „Udostępnij” z Map Google, Plus Code albo wpisz nazwę,
+  4) przełącznik Lista / Kafelki / Mapa,
+  5) filtry kategorii i Archiwum,
+  6) przesunięcie karty: w lewo archiwum, w prawo usuń, z cofaniem (krótka animacja dłoni na karcie;
+     gdy lista jest pusta, pokaż to na przykładowej karcie oznaczonej „przykład”, która znika po samouczku),
+  7) Dane: kopia zapasowa, bo miejsca są tylko na tym telefonie.
+  Bez zewnętrznej biblioteki. Działa w jasnym i ciemnym motywie, na 375 px, przy obrocie ekranu i przewijaniu.
+  Esc i Pomiń zamykają, fokus zostaje w dymku, prefers-reduced-motion wyłącza animacje.
+  Stan „samouczek obejrzany” zapisany w Dexie (meta) z numerem wersji, żeby przy nowych funkcjach dało się
+  pokazać tylko nowe kroki. W Dane przycisk „Pokaż samouczek” odpala go od nowa.
+  Samouczek nigdy nie blokuje zapisu: stuknięcie w pieczątkę podczas samouczka zapisuje miejsce i zamyka samouczek.
+  Gotowe gdy: e2e Playwright sprawdza pierwsze uruchomienie, Pomiń, brak samouczka po przeładowaniu,
+  ponowne uruchomienie z Dane i zrzuty w obu motywach.
 - [ ] **Radar.** Pełnoekranowy widok: najbliższe X w wybranej kategorii, duża odległość, strzałka kierunku (DeviceOrientation; na iOS przycisk „Włącz kompas” → `requestPermission`). Wake Lock, gdy otwarty. Gotowe gdy: strzałka wskazuje cel z dokładnością do ~15° na telefonie.
 - [ ] **Zapis w ruchu.** Gdy prędkość > 30 km/h: zapisz też `heading` i `speed`, oznacz miejsce jako „przybliżone”, pokaż w liście „do sprawdzenia”. Gotowe gdy: miejsce z jazdy ma znacznik i da się je „poprawić na mapie” przeciągnięciem pinezki.
 - [ ] **Popraw pozycję.** W edycji: mapa z przeciąganym X. Gotowe gdy: przeciągnięcie zmienia współrzędne i adres.
