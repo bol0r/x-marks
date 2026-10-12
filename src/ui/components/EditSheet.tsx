@@ -1,5 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
-import { CATS } from "../../core/cats";
+import { catOf } from "../../core/cats";
 import { dist, fmtCoords, fmtDist, fmtWhen } from "../../core/geo";
 import { navUrl, shareText } from "../../core/format";
 import { olcEncode } from "../../core/olc";
@@ -8,7 +8,7 @@ import { joinNote } from "../../core/speech";
 import type { Cat, Place } from "../../core/types";
 import { listShots } from "../../data/store";
 import { archive, closeSheet, copyText, removePlace, saveEdit } from "../controller";
-import { lastFix, places, uid } from "../state";
+import { catRev, lastFix, places, uid } from "../state";
 import { pickFile, shrink } from "../photos";
 import { PickMap } from "../../map/PickMap";
 import { MicButton } from "./MicButton";
@@ -58,7 +58,7 @@ function EditForm({ place }: { place: Place }) {
 
   return (
     <Sheet onClose={closeSheet}>
-      <div class="cover" id="cov" style={`--c:var(${CATS[cat].color})`}>
+      <div class="cover" id="cov" data-rev={catRev.value} style={`--c:var(${catOf(cat).color})`}>
         <span class="ph">
           <CatIcon cat={cat} />
         </span>

@@ -1,4 +1,4 @@
-import { CATS } from "./cats";
+import { catOf } from "./cats";
 import { olcEncode } from "./olc";
 import { fmtCoords } from "./geo";
 import type { Place } from "./types";
@@ -22,7 +22,7 @@ export function toGPX(places: Place[]): string {
   const wpts = places
     .map(
       (p) =>
-        `  <wpt lat="${p.lat}" lon="${p.lng}"><time>${new Date(p.ts).toISOString()}</time><name>${esc(CATS[p.cat].label + " · " + titleOf(p))}</name><desc>${esc(p.note)}</desc><type>${p.cat}</type></wpt>`,
+        `  <wpt lat="${p.lat}" lon="${p.lng}"><time>${new Date(p.ts).toISOString()}</time><name>${esc(catOf(p.cat).label + " · " + titleOf(p))}</name><desc>${esc(p.note)}</desc><type>${p.cat}</type></wpt>`,
     )
     .join("\n");
   return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="X Marks" xmlns="http://www.topografix.com/GPX/1/1">\n${wpts}\n</gpx>`;
