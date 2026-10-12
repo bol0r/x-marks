@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "node scripts/check-tokens.mjs && tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@preact/signals": "^2.11.3",

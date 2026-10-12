@@ -81,6 +81,10 @@ async function persist() {
   await savePlaces(places.value);
 }
 
+function replacePlace(id: string, patch: Partial<Place>) {
+  places.value = places.value.map((p) => (p.id === id ? { ...p, ...patch } : p));
+}
+
 export function setFilter(f: typeof filter.value) {
   filter.value = f;
 }
@@ -181,10 +185,8 @@ async function reverse(p: Place) {
   try {
     const addr = await reverseGeocodeAddress(p.lat, p.lng);
     if (!addr) return;
-    const it = places.value.find((x) => x.id === p.id);
-    if (!it) return;
-    it.addr = addr;
-    places.value = places.value.slice();
+    if (!places.value.some((x) => x.id === p.id)) return;
+    replacePlace(p.id, { addr });
     await persist();
   } catch {
     /* offline: zostają współrzędne i Plus Code */
@@ -298,8 +300,7 @@ function archiveNow(id: string) {
   const p = places.value.find((x) => x.id === id);
   if (!p) return;
   const was = !!p.archived;
-  p.archived = !was;
-  places.value = places.value.slice();
+  replacePlace(id, { archived: !was });
   void persist();
   showToast({
     title: was ? "Przywrócono" : "Zarchiwizowano",
@@ -308,8 +309,7 @@ function archiveNow(id: string) {
       {
         label: "Cofnij",
         fn: () => {
-          p.archived = was;
-          places.value = places.value.slice();
+          replacePlace(id, { archived: was });
           void persist();
         },
       },
@@ -358,11 +358,9 @@ export async function setCover(id: string, file: Blob): Promise<boolean> {
   try {
     const b = await shrink(file);
     await putPhoto(id, b);
-    const p = places.value.find((x) => x.id === id);
-    if (p) {
-      p.photo = true;
+    if (places.value.some((x) => x.id === id)) {
       dropPhotoURL(id);
-      places.value = places.value.slice();
+      replacePlace(id, { photo: true });
       await persist();
     }
     return true;
@@ -376,27 +374,25 @@ export async function saveEdit(id: string, patch: { name: string; note: string; 
   await readyGate;
   const p = places.value.find((x) => x.id === id);
   if (!p) return;
-  p.name = patch.name;
-  p.note = patch.note;
-  p.cat = patch.cat;
+  const next: Partial<Place> = { name: patch.name, note: patch.note, cat: patch.cat };
   try {
     if (patch.drop && p.photo) {
       await delPhoto(p.id);
-      p.photo = false;
+      next.photo = false;
       dropPhotoURL(p.id);
     }
     if (patch.file) {
       const b = await shrink(patch.file);
       await putPhoto(p.id, b);
-      p.photo = true;
+      next.photo = true;
       dropPhotoURL(p.id);
     }
   } catch {
-    places.value = places.value.slice();
+    replacePlace(id, next);
     await persist();
     throw new Error("photo");
   }
-  places.value = places.value.slice();
+  replacePlace(id, next);
   await persist();
 }
 

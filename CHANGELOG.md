@@ -1,5 +1,6 @@
 # Zmiany
 
+- Faza 0 — testy e2e (zapis, nazwa, przesunięcie, zdjęcie, kopia) i odświeżanie karty po zmianie notatki, zdjęcia i adresu.
 - Faza 0 — miejsca i zdjęcia z v0.4 przechodzą do Dexie, a kopia JSON nadal ma notatki i zdjęcia.
 - Faza 0 — kolory, fonty, promienie, cienie i odstępy są w tokenach CSS.
 - Faza 0 — aplikacja v0.4 działa na Vite, TypeScript i Preact (zapis jednym stuknięciem, lista, kafelki, mapa).

@@ -62,7 +62,9 @@ export function pickFile(): Promise<File | null> {
       resolve(f);
     };
     inp.onchange = () => finish(inp.files?.[0] ?? null);
-    inp.addEventListener("cancel", () => finish(null));
+    inp.addEventListener("cancel", () => {
+      window.setTimeout(() => finish(inp.files?.[0] ?? null), 400);
+    });
     document.body.appendChild(inp);
     inp.click();
   });
