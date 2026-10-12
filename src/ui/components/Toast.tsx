@@ -1,5 +1,6 @@
-import { closeToast } from "../controller";
+import { appendNote, closeToast, holdToast, releaseToast } from "../controller";
 import { toast } from "../state";
+import { MicButton } from "./MicButton";
 
 export function Toast() {
   const t = toast.value;
@@ -13,19 +14,31 @@ export function Toast() {
         {t.title}
         {t.sub ? <small>{t.sub}</small> : null}
       </p>
-      {t.actions.map((a, i) => (
-        <button
-          type="button"
-          key={a.label + i}
-          onClick={() => {
-            const undo = a.label === "Cofnij";
-            closeToast(!undo);
-            a.fn();
-          }}
-        >
-          {a.label}
-        </button>
-      ))}
+      <div class="toast-acts">
+        {t.placeId ? (
+          <MicButton
+            look="mic"
+            onStart={holdToast}
+            onStop={releaseToast}
+            onText={(text) => {
+              void appendNote(t.placeId || "", text);
+            }}
+          />
+        ) : null}
+        {t.actions.map((a, i) => (
+          <button
+            type="button"
+            key={a.label + i}
+            onClick={() => {
+              const undo = a.label === "Cofnij";
+              closeToast(!undo);
+              a.fn();
+            }}
+          >
+            {a.label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

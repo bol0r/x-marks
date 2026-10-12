@@ -814,6 +814,7 @@ main {
   border-radius: var(--r-card);
   padding: var(--s-hit) var(--s-7) var(--s-hit) var(--s-8);
   display: flex;
+  flex-wrap: wrap;
   gap: var(--s-5);
   align-items: center;
   box-shadow: var(--shadow-toast);
@@ -840,7 +841,15 @@ main {
   margin: 0;
   flex: 1;
   min-width: 0;
+  overflow: hidden;
   font-weight: 700;
+}
+.toast-acts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  width: 100%;
+  justify-content: flex-end;
 }
 .toast small {
   display: block;
@@ -852,6 +861,7 @@ main {
   text-overflow: ellipsis;
 }
 .toast button {
+  flex: none;
   background: transparent;
   border: 1.5px solid color-mix(in srgb, var(--bg) 45%, transparent);
   color: inherit;
@@ -859,6 +869,10 @@ main {
   padding: var(--s-4) var(--r-control);
   font: 700 13px var(--body);
   cursor: pointer;
+}
+button[data-mic="1"][aria-pressed="true"] {
+  border-color: var(--mark);
+  color: var(--mark);
 }
 
 .sheet {
@@ -1038,6 +1052,7 @@ input[type="text"]:focus {
 .inrow textarea {
   flex: 1;
   min-width: 0;
+  width: auto;
 }
 .cover {
   position: relative;

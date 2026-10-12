@@ -35,6 +35,7 @@ export interface ToastModel {
   actions: ToastAction[];
   ms: number;
   onExpire: (() => void) | null;
+  placeId: string | null;
 }
 
 export const toast = signal<ToastModel | null>(null);

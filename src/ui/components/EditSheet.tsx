@@ -3,11 +3,13 @@ import { CATS } from "../../core/cats";
 import { dist, fmtCoords, fmtDist, fmtWhen } from "../../core/geo";
 import { navUrl, shareText } from "../../core/format";
 import { olcEncode } from "../../core/olc";
+import { joinNote } from "../../core/speech";
 import type { Cat, Place } from "../../core/types";
 import { archive, closeSheet, copyText, removePlace, saveEdit } from "../controller";
 import { lastFix, places } from "../state";
 import { photoURL, pickFile } from "../photos";
 import { PickMap } from "../../map/PickMap";
+import { MicButton } from "./MicButton";
 import { CatIcon } from "./Icons";
 import { CatSeg } from "./CatSeg";
 import { Sheet } from "./Sheet";
@@ -97,13 +99,16 @@ function EditForm({ place }: { place: Place }) {
         value={name}
         onInput={(e) => setName((e.target as HTMLInputElement).value)}
       />
-      <textarea
-        id="noteIn"
-        rows={3}
-        placeholder="Notatka: dojazd, pora dnia, na co uważać"
-        value={note}
-        onInput={(e) => setNote((e.target as HTMLTextAreaElement).value)}
-      />
+      <div class="inrow">
+        <textarea
+          id="noteIn"
+          rows={3}
+          placeholder="Notatka: dojazd, pora dnia, na co uważać"
+          value={note}
+          onInput={(e) => setNote((e.target as HTMLTextAreaElement).value)}
+        />
+        <MicButton onText={(text) => setNote((n) => joinNote(n, text))} />
+      </div>
       <CatSeg id="editCat" value={cat} onPick={setCat} />
       <PickMap placeId={place.id} lat={place.lat} lng={place.lng} cat={place.cat} />
       <div class="meta-line" id="editMeta">
