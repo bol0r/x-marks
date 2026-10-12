@@ -33,6 +33,10 @@ import {
 } from "./state";
 
 let toastTimer = 0;
+let openGate = () => {};
+const readyGate = new Promise<void>((resolve) => {
+  openGate = resolve;
+});
 
 export function closeToast(expire = true) {
   const c = toast.value;
@@ -73,6 +77,7 @@ export function refForParse() {
 }
 
 async function persist() {
+  await readyGate;
   await savePlaces(places.value);
 }
 
@@ -146,6 +151,7 @@ function savedToast(p: Place) {
 }
 
 export async function addPlace(cat: Cat, lat: number, lng: number, acc: number | null, src: string, name?: string) {
+  await readyGate;
   const p: Place = {
     id: uid(),
     cat,
@@ -279,11 +285,16 @@ export async function addAtHere(cat: Cat) {
 }
 
 export async function onPad(cat: Cat) {
+  await readyGate;
   if (gpsOk.value === false) openPaste(cat);
   else await addAtHere(cat);
 }
 
 export function archive(id: string) {
+  void readyGate.then(() => archiveNow(id));
+}
+
+function archiveNow(id: string) {
   const p = places.value.find((x) => x.id === id);
   if (!p) return;
   const was = !!p.archived;
@@ -307,6 +318,10 @@ export function archive(id: string) {
 }
 
 export function removePlace(id: string) {
+  void readyGate.then(() => removeNow(id));
+}
+
+function removeNow(id: string) {
   const i = places.value.findIndex((x) => x.id === id);
   if (i < 0) return;
   const p = places.value[i]!;
@@ -339,6 +354,7 @@ export function removePlace(id: string) {
 }
 
 export async function setCover(id: string, file: Blob): Promise<boolean> {
+  await readyGate;
   try {
     const b = await shrink(file);
     await putPhoto(id, b);
@@ -357,6 +373,7 @@ export async function setCover(id: string, file: Blob): Promise<boolean> {
 }
 
 export async function saveEdit(id: string, patch: { name: string; note: string; cat: Cat; file: File | null; drop: boolean }) {
+  await readyGate;
   const p = places.value.find((x) => x.id === id);
   if (!p) return;
   p.name = patch.name;
@@ -431,6 +448,7 @@ async function dl(name: string, text: string, type: string, msg?: (t: string) =>
 }
 
 export async function runBackup(msg?: (t: string) => void) {
+  await readyGate;
   const stamp = new Date().toISOString().slice(0, 10);
   const name = `xmarks-${stamp}.json`;
   msg?.("Przygotowuję kopię…");
@@ -459,6 +477,7 @@ export async function runBackup(msg?: (t: string) => void) {
 }
 
 export async function runImport(file: File): Promise<number> {
+  await readyGate;
   const data = JSON.parse(await file.text()) as unknown;
   const plan = planImport(places.value, data);
   for (const ph of plan.photos) {
@@ -533,6 +552,7 @@ export async function boot() {
     places.value = loadPlacesSync();
   }
   ready.value = true;
+  openGate();
   try {
     await navigator.storage?.persist?.();
   } catch {

@@ -93,8 +93,34 @@ async function run<T>(mode: IDBTransactionMode, fn: (store: IDBObjectStore) => I
   });
 }
 
+export const DEXIE_FLAG = "xmarks.dexie";
+
+export function dexieReadyFlag(): boolean {
+  return lsGet(DEXIE_FLAG) === "1";
+}
+
+export function markDexieReady() {
+  lsSet(DEXIE_FLAG, "1");
+}
+
 export const PhotoDB = {
   get: (id: string) => run<Blob | undefined>("readonly", (s) => s.get(id)),
   put: (id: string, blob: Blob) => run("readwrite", (s) => s.put(blob, id)),
   del: (id: string) => run("readwrite", (s) => s.delete(id)),
+  all: async (): Promise<[string, Blob][]> => {
+    const db = await openPhotos();
+    return new Promise((res, rej) => {
+      const out: [string, Blob][] = [];
+      const t = db.transaction("photos", "readonly");
+      const cur = t.objectStore("photos").openCursor();
+      cur.onsuccess = () => {
+        const c = cur.result;
+        if (!c) return;
+        if (c.value) out.push([String(c.key), c.value as Blob]);
+        c.continue();
+      };
+      t.oncomplete = () => res(out);
+      t.onerror = () => rej(t.error);
+    });
+  },
 };

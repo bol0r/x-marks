@@ -87,7 +87,7 @@ public/        icons, manifest
 ### Faza 0 — Fundament (bez zmian dla użytkownika)
 - [x] **Vite + TS + Preact.** Przenieś aplikację 1:1 do struktury z sekcji 4. Gotowe gdy: `npm run dev` działa, wygląd i funkcje jak w v0.4, stary `_fragment.html` usunięty, `build.py` usunięty.
 - [x] **Tokeny.** Wszystkie kolory, fonty, promienie i cienie w `src/styles/tokens.css`. Gotowe gdy: w komponentach nie ma żadnego literalnego koloru (poza nakładką na zdjęcie).
-- [ ] **Dexie + migracja.** Tabele z sekcji 4. Przy pierwszym uruchomieniu przenieś `localStorage["xmarks.v1"]` (i `pinezki.v1`) oraz zdjęcia z bazy `xmarks/photos`. Gotowe gdy: test migracji przechodzi na danych z v0.4, nic nie ginie.
+- [x] **Dexie + migracja.** Tabele z sekcji 4. Przy pierwszym uruchomieniu przenieś `localStorage["xmarks.v1"]` (i `pinezki.v1`) oraz zdjęcia z bazy `xmarks/photos`. Gotowe gdy: test migracji przechodzi na danych z v0.4, nic nie ginie.
 - [ ] **Testy.** Przenieś 22 testy do Vitest. Dodaj e2e Playwright: zapis z GPS (mock), Dodaj z nazwy (mock Nominatim), przesunięcie + cofnij, zdjęcie okładki, kopia → import. Gotowe gdy: `npm test` i `npm run e2e` zielone.
 - [ ] **CI/CD.** GitHub Actions: lint + testy + build + deploy na Pages. Gotowe gdy: push na `main` aktualizuje stronę, czerwony test blokuje deploy.
 - [ ] **Jakość.** ESLint + Prettier, `tsc --noEmit` w CI, Lighthouse PWA ≥ 90, bundle startowy < 120 KB gzip (mapa ładowana leniwie).

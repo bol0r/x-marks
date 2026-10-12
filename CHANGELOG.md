@@ -1,5 +1,6 @@
 # Zmiany
 
+- Faza 0 — miejsca i zdjęcia z v0.4 przechodzą do Dexie, a kopia JSON nadal ma notatki i zdjęcia.
 - Faza 0 — kolory, fonty, promienie, cienie i odstępy są w tokenach CSS.
 - Faza 0 — aplikacja v0.4 działa na Vite, TypeScript i Preact (zapis jednym stuknięciem, lista, kafelki, mapa).
 - v0.4 — nowa warstwa wizualna „mapa skarbów” (pergamin/noc, pieczątki, szlak z X-ami, pieczęć przy zapisie, mapa w sepii z X-ami i szlakiem do najbliższego), Leaflet lokalnie, ROADMAP.md

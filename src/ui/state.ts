@@ -1,11 +1,12 @@
 import { computed, signal } from "@preact/signals";
 import type { Cat, Filter, Fix, Place, View } from "../core/types";
 import { dist } from "../core/geo";
-import { loadBackupStamp, loadPlacesSync, loadSwiped, loadView } from "../data/legacy";
+import { dexieReadyFlag, loadBackupStamp, loadPlacesSync, loadSwiped, loadView } from "../data/legacy";
 
 const hasStore = typeof localStorage !== "undefined";
-export const places = signal<Place[]>(hasStore ? loadPlacesSync() : []);
-export const ready = signal(hasStore);
+const showLegacyFirst = hasStore && !dexieReadyFlag();
+export const places = signal<Place[]>(showLegacyFirst ? loadPlacesSync() : []);
+export const ready = signal(showLegacyFirst);
 export const filter = signal<Filter>("all");
 export const view = signal<View>(typeof localStorage === "undefined" ? "list" : loadView());
 export const sortNear = signal(false);

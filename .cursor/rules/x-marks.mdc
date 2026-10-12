@@ -18,7 +18,7 @@ alwaysApply: true
 
 # Kod
 - Vite + TypeScript (strict) + Preact. Wejście: `index.html`, źródła w `src/`. Skrypty: `npm run dev`, `npm run build`, `npm test` (Vitest), `npm run e2e` (od testów Playwright).
-- Dane miejsc: do migracji Dexie nadal localStorage `xmarks.v1` / `pinezki.v1` i IndexedDB `xmarks/photos` (`src/data/legacy.ts`). Po punkcie migracji źródłem jest Dexie.
+- Dane miejsc: Dexie `xmarks-db` (`src/data/db.ts`, `store.ts`). Stary `localStorage` (`xmarks.v1` / `pinezki.v1`) i IndexedDB `xmarks/photos` służą tylko do jednorazowej migracji i awaryjnego zapisu, gdy IndexedDB nie działa.
 - Logika bez DOM w `src/core/`. Testy jednostkowe w `tests/unit/`.
 - Wygląd: `src/styles/tokens.css` i `src/styles/base.css`. Mapa: `src/map/MapView.tsx` (MapLibre + OpenFreeMap, leniwie).
 - Nie edytuj `dist/`. Nie commituj sekretów (`.env` w `.gitignore`).
