@@ -125,7 +125,7 @@ public/        icons, manifest
 ### Faza 2 — Dron Ops (najmocniejsza funkcja)
 - [x] **Pogoda dronowa.** Dla miejsc Dron: wiatr i porywy na 10 m, 80 m, 120 m, opady, chmury, widzialność, temperatura (Open-Meteo, bez klucza). Gotowe gdy: karta pokazuje dane na teraz i +6 h, z cache 30 min.
 - [x] **Werdykt lotu.** „Lecisz / Ryzyko / Odpuść” wg progów zależnych od drona (ustawienia: model, limit wiatru, np. klasa C0 ~10 m/s). Uwzględnia porywy, opady, temperaturę < 0 °C, indeks Kp (NOAA SWPC). Gotowe gdy: testy jednostkowe progów + czytelna przyczyna („porywy 13 m/s na 80 m”).
-- [ ] **Okno lotów.** Najlepsze godziny w ciągu 48 h dla każdego miejsca Dron, z wschodem/zachodem, złotą i niebieską godziną (SunCalc). Gotowe gdy: widok „Kiedy lecieć” sortuje miejsca po najbliższym dobrym oknie.
+- [x] **Okno lotów.** Najlepsze godziny w ciągu 48 h dla każdego miejsca Dron, z wschodem/zachodem, złotą i niebieską godziną (SunCalc). Gotowe gdy: widok „Kiedy lecieć” sortuje miejsca po najbliższym dobrym oknie.
 - [ ] **Złota godzina wszędzie.** Na każdej karcie: dzisiejszy zachód i złota godzina dla tego miejsca. Gotowe gdy: liczone offline.
 - [ ] **Strefy.** Przycisk „Sprawdź strefę” otwiera mapę PAŻP (DroneMap) dla współrzędnych miejsca; jeśli da się, pokaż ostrzeżenie dla znanych stref (CTR Wrocław) z lokalnego GeoJSON. Gotowe gdy: miejsce w CTR dostaje widoczny znacznik.
 - [ ] **Checklista przedlotowa.** Edytowalna lista (baterie, karta, śmigła, strefa, zgoda właściciela terenu). Gotowe gdy: odhaczanie przed lotem, reset po locie.

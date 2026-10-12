@@ -1,5 +1,16 @@
 import { catalog } from "../../core/cats";
-import { setFilter, setQuery, setStarFilter, setTagFilter, setViewMode, toggleSort, openPaste, openData, openRadar } from "../controller";
+import {
+  setFilter,
+  setQuery,
+  setStarFilter,
+  setTagFilter,
+  setViewMode,
+  toggleSort,
+  openPaste,
+  openData,
+  openRadar,
+  openWindows,
+} from "../controller";
 import { catRev, coach, counts, filter, lastFix, places, query, sortNear, starFilter, tagFilter, view } from "../state";
 
 export function Toolbar() {
@@ -94,6 +105,9 @@ export function Toolbar() {
         </button>
         <button type="button" class="ghost" id="radarBtn" onClick={openRadar}>
           Radar
+        </button>
+        <button type="button" class="ghost" id="whenBtn" onClick={openWindows}>
+          Kiedy lecieć
         </button>
         <button type="button" class="ghost" id="pasteBtn" data-coach="paste" onClick={() => openPaste()}>
           Dodaj

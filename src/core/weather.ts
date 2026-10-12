@@ -74,7 +74,8 @@ export function forecastUrl(lat: number, lng: number): string {
       "wind_speed_120m",
       "wind_gusts_10m",
     ].join(","),
-    forecast_days: "2",
+    // Trzy doby, żeby wieczorem w oknie 48 h zostało dość godzin.
+    forecast_days: "3",
     wind_speed_unit: "ms",
     timezone: "UTC",
   });
