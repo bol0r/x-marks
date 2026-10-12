@@ -1,5 +1,6 @@
 # Zmiany
 
+- Faza 0 — GitHub Actions odpala testy i build, a na Pages wchodzi tylko zielony wynik z main.
 - Faza 0 — testy e2e (zapis, nazwa, przesunięcie, zdjęcie, kopia) i odświeżanie karty po zmianie notatki, zdjęcia i adresu.
 - Faza 0 — miejsca i zdjęcia z v0.4 przechodzą do Dexie, a kopia JSON nadal ma notatki i zdjęcia.
 - Faza 0 — kolory, fonty, promienie, cienie i odstępy są w tokenach CSS.
