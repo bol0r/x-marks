@@ -1,5 +1,6 @@
 import { CATS } from "../core/cats";
 import { motionFromFix } from "../core/motion";
+import { joinNote } from "../core/speech";
 import { COACH_STEPS, COACH_VERSION, stepsFor } from "../core/coach";
 import { readCoach, writeCoachVersion } from "../data/coach";
 import { fmtWhen } from "../core/geo";
@@ -51,12 +52,24 @@ export function closeToast(expire = true) {
   if (expire && c.onExpire) c.onExpire();
 }
 
+export function holdToast() {
+  window.clearTimeout(toastTimer);
+}
+
+export function releaseToast() {
+  const c = toast.value;
+  if (!c) return;
+  window.clearTimeout(toastTimer);
+  toastTimer = window.setTimeout(() => closeToast(), c.ms);
+}
+
 export function showToast(t: {
   title: string;
   sub?: string;
   actions?: ToastModel["actions"];
   ms?: number;
   onExpire?: (() => void) | null;
+  placeId?: string | null;
 }) {
   closeToast();
   const model: ToastModel = {
@@ -65,6 +78,7 @@ export function showToast(t: {
     actions: t.actions ?? [],
     ms: t.ms ?? 6000,
     onExpire: t.onExpire ?? null,
+    placeId: t.placeId ?? null,
   };
   toast.value = model;
   toastTimer = window.setTimeout(() => closeToast(), model.ms);
@@ -142,10 +156,19 @@ function showStamp(cat: Cat) {
   window.setTimeout(() => el.remove(), 950);
 }
 
+export async function appendNote(id: string, said: string) {
+  await readyGate;
+  const p = places.value.find((x) => x.id === id);
+  if (!p) return;
+  replacePlace(id, { note: joinNote(p.note, said) });
+  await persist();
+}
+
 function savedToast(p: Place) {
   showToast({
     title: CATS[p.cat].label + " zaznaczony",
     sub: (p.acc != null ? "±" + p.acc + " m · " : "") + (p.name || titleOf(p)),
+    placeId: p.id,
     actions: [
       {
         label: "Foto",

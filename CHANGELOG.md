@@ -1,5 +1,6 @@
 # Zmiany
 
+- Faza 1 — notatka głosowa: mikrofon w dymku i edycji dopisuje tekst po polsku, a gdy brak Web Speech, przycisk znika.
 - Faza 1 — popraw pozycję: w edycji przeciągnięcie X zmienia współrzędne i adres.
 - Faza 1 — zapis w ruchu: powyżej 30 km/h miejsce jest do sprawdzenia, a pinezkę da się przesunąć.
 - Faza 1 — radar: najbliższe miejsce w kategorii, duża odległość i strzałka kompasu.

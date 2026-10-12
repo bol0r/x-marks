@@ -1,5 +1,6 @@
 # Decyzje agenta
 
+- Notatka głosowa używa Web Speech API `pl-PL` bez dodatkowej biblioteki; w dymku dopisuje się od razu do miejsca, w edycji do pola notatki, a brak API chowa przycisk.
 - W edycji osobna mapa z przeciąganym X zapisuje nową pozycję także gdy palec puści poza mapą, a adres jest szukany od nowa; baza zostaje bez nowej wersji.
 - Zapis powyżej 30 km/h trzyma prędkość w km/h, kurs i znacznik przybliżenia; po przesunięciu pinezki znacznik schodzi, a adres jest szukany od nowa. Migracja Dexie v2 dopisuje starym miejscom `approx: false` i niczego nie usuwa.
 - Radar liczy azymut na telefonie i obraca strzałkę o różnicę azymutu oraz kompasu; na iOS kompas rusza dopiero po „Włącz kompas”, a Wake Lock trzyma ekran tylko gdy radar jest otwarty.
