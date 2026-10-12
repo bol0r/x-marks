@@ -1,5 +1,6 @@
 # Zmiany
 
+- Faza 2 — pogoda dronowa: karta Dron pokazuje wiatr i porywy na 10, 80 i 120 m, teraz i za 6 h, z cache na 30 min.
 - Faza 1 — offline mapa okolicy: przycisk zapisuje kafelki w promieniu 10 km, a w trybie samolotowym mapa się wyświetla.
 - Faza 1 — wyszukiwarka: „lakowa” znajduje „Łąkową” w nazwie, notatce, adresie i tagach, także offline.
 - Faza 1 — tagi i ocena: filtr „woda” i 3X zostawia tylko miejsca z tym tagiem i trzema X.

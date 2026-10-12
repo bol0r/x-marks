@@ -368,6 +368,39 @@ main {
   font-size: 17px;
   line-height: 1.3;
 }
+.wx {
+  margin-top: var(--s-6);
+  padding-top: var(--s-5);
+  border-top: 1px dashed var(--line);
+  color: var(--fg);
+  font: 12px var(--body);
+  overflow-wrap: anywhere;
+}
+.wx-h {
+  margin: 0 0 var(--s-3);
+  color: var(--c, var(--dron));
+  font: 700 10.5px var(--body);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.wx-grid {
+  display: grid;
+  grid-template-columns: minmax(4.5rem, 1.1fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--s-1) var(--s-4);
+  font-variant-numeric: tabular-nums;
+}
+.wx-grid span:nth-child(3n + 2),
+.wx-grid span:nth-child(3n) {
+  text-align: right;
+}
+.wx-k {
+  color: var(--muted);
+}
+.wx-foot {
+  margin: var(--s-3) 0 0;
+  color: var(--muted);
+  font-size: 11px;
+}
 .acts {
   display: flex;
   gap: var(--s-4);

@@ -1,5 +1,6 @@
 # Decyzje agenta
 
+- Porywy na 80 m i 120 m powstają ze stosunku wiatru do porywów na 10 m, bo Open-Meteo podaje porywy tylko tam; cache 30 min jest w meta Dexie (współrzędne do 0,01°) i nie wchodzi do kopii miejsc.
 - Kafelki okolicy (około 10 km, zoom 12–14) lądują w osobnej bazie `xmarks-map` z limitem 40 MB; w trybie samolotowym mapa bierze je stamtąd, a miejsca zostają w `xmarks-db`.
 - Szukanie składa polskie znaki na telefonie (także „ł” → „l”) i patrzy w nazwę, notatkę, adres i tagi, bez sieci.
 - Tagi i ocena 0–3 siedzą na miejscu; migracja Dexie v4 dopisuje puste tagi i zero X, filtr tagu jest dokładny bez wielkości liter, a kopia JSON niesie oba pola.
