@@ -1,4 +1,5 @@
-import { CATS } from "../core/cats";
+import { catalog, catOf, catSlug, isBuiltin, isIcon, isPalette, MAX_CATS, pickFavs, setCatalog, type CatDef } from "../core/cats";
+import { readCatBook, writeCatBook } from "../data/cats";
 import { motionFromFix } from "../core/motion";
 import { joinNote } from "../core/speech";
 import { COACH_STEPS, COACH_VERSION, stepsFor } from "../core/coach";
@@ -14,6 +15,7 @@ import type { Cat, Fix, Place } from "../core/types";
 import { dropPhotoURL, pickFile, shrink } from "./photos";
 import {
   busyCat,
+  catRev,
   coach,
   filter,
   fixRev,
@@ -151,7 +153,7 @@ function showStamp(cat: Cat) {
   const el = document.createElement("div");
   el.className = "stamp";
   el.setAttribute("aria-hidden", "true");
-  el.innerHTML = `<svg viewBox="0 0 100 100"><path d="M18 18L82 82M82 18L18 82"/></svg><span>${CATS[cat].label}</span>`;
+  el.innerHTML = `<svg viewBox="0 0 100 100"><path d="M18 18L82 82M82 18L18 82"/></svg><span>${catOf(cat).label}</span>`;
   document.body.appendChild(el);
   window.setTimeout(() => el.remove(), 950);
 }
@@ -166,7 +168,7 @@ export async function appendNote(id: string, said: string) {
 
 function savedToast(p: Place) {
   showToast({
-    title: CATS[p.cat].label + " zaznaczony",
+    title: catOf(p.cat).label + " zaznaczony",
     sub: (p.acc != null ? "±" + p.acc + " m · " : "") + (p.name || titleOf(p)),
     placeId: p.id,
     actions: [
@@ -498,7 +500,7 @@ export async function backupJSON(): Promise<string> {
     }
     if (!gallery[p.id]?.length) delete gallery[p.id];
   }
-  return serializeBackup(places.value, photos, new Date(), gallery);
+  return serializeBackup(places.value, photos, new Date(), gallery, catalog().custom);
 }
 
 export function lastBackupTxt(): string {
@@ -574,8 +576,45 @@ export async function runImport(file: File): Promise<number> {
     }
   }
   places.value = [...places.value, ...plan.added].sort((a, b) => b.ts - a.ts);
+  if (plan.categories.length) await mergeCategories(plan.categories);
   await persist();
   return plan.added.length;
+}
+
+async function mergeCategories(incoming: CatDef[]) {
+  const book = catalog();
+  const custom = book.custom.slice();
+  for (const cat of incoming) {
+    if (isBuiltin(cat.id) || custom.some((c) => c.id === cat.id)) continue;
+    if (custom.length + 3 >= MAX_CATS) break;
+    custom.push(cat);
+  }
+  await saveCatalog(custom, book.favs);
+}
+
+async function saveCatalog(custom: CatDef[], favs: string[]) {
+  setCatalog(custom, favs);
+  catRev.value++;
+  const book = catalog();
+  await writeCatBook({ custom: book.custom, favs: book.favs });
+}
+
+export async function addCategory(label: string, color: string, icon: string): Promise<string> {
+  const book = catalog();
+  if (book.all.length >= MAX_CATS) return "Maks. 6 kategorii.";
+  if (!isPalette(color) || !isIcon(icon)) return "Wybierz kolor i ikonę.";
+  const id = catSlug(
+    label,
+    book.all.map((c) => c.id),
+  );
+  if (!id) return "Podaj inną nazwę.";
+  await saveCatalog([...book.custom, { id, label: label.trim(), color, icon }], book.favs);
+  return "";
+}
+
+export async function toggleFav(id: string) {
+  const book = catalog();
+  await saveCatalog(book.custom, pickFavs(book.favs, id));
 }
 
 export async function copyJSON(msg: (t: string) => void) {
@@ -631,6 +670,13 @@ export function captureLaunch() {
 }
 
 export async function boot() {
+  try {
+    const book = await readCatBook();
+    setCatalog(book.custom, book.favs);
+    catRev.value++;
+  } catch {
+    /* zostają trzy wbudowane */
+  }
   try {
     places.value = await loadPlaces();
   } catch {

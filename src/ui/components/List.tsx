@@ -1,11 +1,11 @@
 import { useEffect, useRef } from "preact/hooks";
-import { CATS } from "../../core/cats";
+import { catOf } from "../../core/cats";
 import { dist, fmtCoords, fmtDist, fmtWhen } from "../../core/geo";
 import { navUrl, shareText, titleOf } from "../../core/format";
 import { olcEncode } from "../../core/olc";
 import type { Place } from "../../core/types";
 import { archive, copyText, markSwipedOnce, openEdit, removePlace } from "../controller";
-import { coach, filter, lastFix, places, ready, showSplash, shown, swipedOnce, view } from "../state";
+import { catRev, coach, filter, lastFix, places, ready, showSplash, shown, swipedOnce, view } from "../state";
 import { EmptyAll, EmptyFilter } from "./Empty";
 import { CatIcon } from "./Icons";
 import { Photo } from "./Photo";
@@ -53,7 +53,7 @@ function Card({ p, marked }: { p: Place; marked?: boolean }) {
   const addrBit = p.name && p.addr ? p.addr : "";
   return (
     <div class="sw" data-id={p.id} data-coach={marked ? "card" : undefined}>
-      <i class="xm" style={`--c:var(${CATS[p.cat].color})`}>
+      <i class="xm" style={`--c:var(${catOf(p.cat).color})`}>
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M5 5L19 19M19 5L5 19" />
         </svg>
@@ -62,10 +62,10 @@ function Card({ p, marked }: { p: Place; marked?: boolean }) {
         <span class="sw-del">Usuń</span>
         <span class="sw-arch">{p.archived ? "Przywróć" : "Archiwizuj"}</span>
       </div>
-      <article class="item" style={`--c:var(${CATS[p.cat].color})`}>
+      <article class="item" style={`--c:var(${catOf(p.cat).color})`}>
         <div style="min-width:0">
           <div class="top">
-            <span class="cat">{CATS[p.cat].label}</span>
+            <span class="cat">{catOf(p.cat).label}</span>
             <span class="when">{fmtWhen(p.ts)}</span>
           </div>
           <p class="name">{titleOf(p)}</p>
@@ -105,7 +105,7 @@ function Tile({ p }: { p: Place }) {
   const fix = lastFix.value;
   const sub = fix ? fmtDist(dist(fix, p)) : fmtWhen(p.ts);
   return (
-    <button type="button" class="tile" style={`--c:var(${CATS[p.cat].color})`} data-id={p.id}>
+    <button type="button" class="tile" style={`--c:var(${catOf(p.cat).color})`} data-id={p.id}>
       {p.photo ? (
         <Photo id={p.id} />
       ) : (
@@ -114,7 +114,7 @@ function Tile({ p }: { p: Place }) {
         </span>
       )}
       <span class="meta">
-        <span class="pill">{CATS[p.cat].label}</span>
+        <span class="pill">{catOf(p.cat).label}</span>
         <span class="tname">{titleOf(p)}</span>
         <span class="tsub">{sub}</span>
       </span>
@@ -249,7 +249,7 @@ export function PlaceList() {
   const mode = view.value === "tiles" ? "tiles" : "list";
   const demo = coachOnCard() && view.value === "list";
   return (
-    <div ref={ref} id="items" class={mode} hidden={view.value === "map"}>
+    <div ref={ref} id="items" class={mode} data-rev={catRev.value} hidden={view.value === "map"}>
       {!ready.value ? null : demo && !items.length ? (
         <>
           <p class="hint swipe-hint">← do archiwum · przesuń kartę · usuń →</p>

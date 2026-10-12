@@ -1,13 +1,73 @@
 import { useState } from "preact/hooks";
-import { closeSheet, copyJSON, downloadGPX, lastBackupTxt, replayCoach, runBackup, runImport } from "../controller";
-import { places } from "../state";
+import { catalog, ICONS, PALETTE } from "../../core/cats";
+import { addCategory, closeSheet, copyJSON, downloadGPX, lastBackupTxt, replayCoach, runBackup, runImport, toggleFav } from "../controller";
+import { catRev, places } from "../state";
+import { IconArt } from "./Icons";
 import { Sheet } from "./Sheet";
 
 export function DataSheet() {
   const [msg, setMsg] = useState("");
+  const [name, setName] = useState("");
+  const [color, setColor] = useState<(typeof PALETTE)[number]>("--mark");
+  const [icon, setIcon] = useState<(typeof ICONS)[number]>("eye");
+  const book = catalog();
   return (
     <Sheet onClose={closeSheet}>
-      <h2>Dane</h2>
+      <h2 data-rev={catRev.value}>Dane</h2>
+      <p>Kategorie ({book.all.length}/6). Pieczątki na dole to trzy ulubione.</p>
+      <input
+        id="catName"
+        type="text"
+        placeholder="Nazwa, np. Widok"
+        value={name}
+        onInput={(e) => setName((e.target as HTMLInputElement).value)}
+      />
+      <div class="seg" id="catColors">
+        {PALETTE.map((c) => (
+          <button
+            type="button"
+            class="swatch"
+            data-color={c}
+            aria-label={c.slice(2)}
+            aria-pressed={color === c}
+            style={`--c:var(${c});background:var(${c})`}
+            onClick={() => setColor(c)}
+          />
+        ))}
+      </div>
+      <div class="seg" id="catIcons">
+        {ICONS.map((item) => (
+          <button type="button" data-icon={item} aria-label={item} aria-pressed={icon === item} onClick={() => setIcon(item)}>
+            <IconArt icon={item} />
+          </button>
+        ))}
+      </div>
+      <button
+        type="button"
+        class="btn"
+        id="addCat"
+        onClick={() => {
+          void addCategory(name, color, icon).then((err) => {
+            setMsg(err || `Dodano ${name.trim()}`);
+            if (!err) setName("");
+          });
+        }}
+      >
+        Dodaj kategorię
+      </button>
+      <div class="row">
+        {book.all.map((cat) => (
+          <button
+            type="button"
+            class="btn small"
+            data-fav={cat.id}
+            aria-pressed={book.favs.includes(cat.id)}
+            onClick={() => void toggleFav(cat.id)}
+          >
+            {cat.label}
+          </button>
+        ))}
+      </div>
       <p>
         Miejsca i zdjęcia są zapisane tylko na tym telefonie ({places.value.length} szt.). Nikt inny ich nie widzi, nawet pod tym samym
         adresem. Ostatnia kopia: <b>{lastBackupTxt()}</b>.

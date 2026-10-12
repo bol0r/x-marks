@@ -1,4 +1,4 @@
-export type Cat = "dron" | "chill" | "cozy";
+export type Cat = string;
 
 export interface Place {
   id: string;

@@ -51,6 +51,7 @@ export interface CoachSession {
 
 export const coach = signal<CoachSession | null>(null);
 export const showRadar = signal(false);
+export const catRev = signal(0);
 
 export const shown = computed(() => {
   const f = filter.value;
@@ -62,8 +63,8 @@ export const shown = computed(() => {
 
 export const counts = computed(() => {
   const active = places.value.filter((p) => !p.archived);
-  const c = { all: active.length, dron: 0, chill: 0, cozy: 0, arch: places.value.length - active.length };
-  for (const p of active) c[p.cat] += 1;
+  const c: Record<string, number> = { all: active.length, dron: 0, chill: 0, cozy: 0, arch: places.value.length - active.length };
+  for (const p of active) c[p.cat] = (c[p.cat] ?? 0) + 1;
   return c;
 });
 

@@ -1,28 +1,24 @@
-import { CATS } from "../../core/cats";
-import type { Cat, Filter } from "../../core/types";
+import { catalog } from "../../core/cats";
 import { setFilter, setViewMode, toggleSort, openPaste, openData, openRadar } from "../controller";
-import { coach, counts, filter, lastFix, places, sortNear, view } from "../state";
-
-const FILTERS: { id: Filter; label: string; cat?: Cat }[] = [
-  { id: "all", label: "Wszystkie" },
-  { id: "dron", label: "Dron", cat: "dron" },
-  { id: "chill", label: "Chill", cat: "chill" },
-  { id: "cozy", label: "Cozy", cat: "cozy" },
-];
+import { catRev, coach, counts, filter, lastFix, places, sortNear, view } from "../state";
 
 export function Toolbar() {
   const c = counts.value;
   const revealArch = coach.value?.steps[coach.value.index]?.target === "filters";
   const archHidden = !c.arch && filter.value !== "arch" && !revealArch;
+  const filters = [
+    { id: "all", label: "Wszystkie", color: "" },
+    ...catalog().all.map((cat) => ({ id: cat.id, label: cat.label, color: cat.color })),
+  ];
   return (
     <>
-      <div class="tools" id="filters" data-coach="filters" role="toolbar" aria-label="Kategorie">
-        {FILTERS.map((f) => (
+      <div class="tools" id="filters" data-coach="filters" data-rev={catRev.value} role="toolbar" aria-label="Kategorie">
+        {filters.map((f) => (
           <button type="button" class="chip" data-f={f.id} aria-pressed={filter.value === f.id} onClick={() => setFilter(f.id)}>
-            {f.cat && <i style={`--c:var(${CATS[f.cat].color})`} />}
+            {f.color ? <i style={`--c:var(${f.color})`} /> : null}
             {f.label}
             <span class="n" id={"n-" + f.id}>
-              {c[f.id]}
+              {c[f.id] ?? 0}
             </span>
           </button>
         ))}

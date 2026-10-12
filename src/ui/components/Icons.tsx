@@ -1,4 +1,4 @@
-import type { Cat } from "../../core/types";
+import { catOf, type IconName } from "../../core/cats";
 
 export function DronIcon() {
   return (
@@ -49,10 +49,53 @@ export function CozyIcon() {
   );
 }
 
-export function CatIcon({ cat }: { cat: Cat }) {
-  if (cat === "dron") return <DronIcon />;
-  if (cat === "chill") return <ChillIcon />;
-  return <CozyIcon />;
+export function IconArt({ icon }: { icon: IconName }) {
+  if (icon === "dron") return <DronIcon />;
+  if (icon === "chill") return <ChillIcon />;
+  if (icon === "cozy") return <CozyIcon />;
+  if (icon === "eye") return <EyeIcon />;
+  if (icon === "tree") return <TreeIcon />;
+  return <PinIcon />;
+}
+
+function EyeIcon() {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+      <path d="M3 16s5-8 13-8 13 8 13 8-5 8-13 8S3 16 3 16z" />
+      <circle cx="16" cy="16" r="4" />
+    </svg>
+  );
+}
+
+function PinIcon() {
+  return (
+    <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+      <path d="M16 28s8-7 8-14a8 8 0 1 0-16 0c0 7 8 14 8 14z" />
+      <circle cx="16" cy="14" r="2.5" fill="currentColor" />
+    </svg>
+  );
+}
+
+function TreeIcon() {
+  return (
+    <svg
+      viewBox="0 0 32 32"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.4"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M16 28V14" />
+      <path d="M16 18l-8 6h16z" />
+      <path d="M16 10l-6 6h12z" />
+    </svg>
+  );
+}
+
+export function CatIcon({ cat }: { cat: string }) {
+  return <IconArt icon={catOf(cat).icon} />;
 }
 
 export function TrailArt() {

@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "preact/hooks";
 import { signal } from "@preact/signals";
 import type { GeoJSONSource, Map as MlMap, Marker } from "maplibre-gl";
-import { CATS } from "../core/cats";
+import { catOf } from "../core/cats";
 import { dist, fmtDist } from "../core/geo";
 import { esc, navUrl, titleOf } from "../core/format";
 import type { Fix, Place } from "../core/types";
 import { correctPlace } from "../ui/controller";
-import { filter, fixRev, inFrame, lastFix, shown, sortNear, view } from "../ui/state";
+import { catRev, filter, fixRev, inFrame, lastFix, shown, sortNear, view } from "../ui/state";
 
 const note = signal("");
 const DAY = "https://tiles.openfreemap.org/styles/positron";
@@ -21,7 +21,7 @@ function xEl(p: Place) {
   el.className = p.approx ? "mx approx" : "mx";
   el.dataset.id = p.id;
   if (p.approx) el.dataset.approx = "1";
-  el.innerHTML = `<svg viewBox="0 0 30 30" style="--c:var(${CATS[p.cat].color})"><rect width="30" height="30" fill="transparent"/><path class="halo" d="M7 7L23 23M23 7L7 23"/><path class="ink" d="M7 7L23 23M23 7L7 23"/></svg>`;
+  el.innerHTML = `<svg viewBox="0 0 30 30" style="--c:var(${catOf(p.cat).color})"><rect width="30" height="30" fill="transparent"/><path class="halo" d="M7 7L23 23M23 7L7 23"/><path class="ink" d="M7 7L23 23M23 7L7 23"/></svg>`;
   return el;
 }
 
@@ -83,7 +83,7 @@ async function draw(el: HTMLElement, items: Place[], fix: Fix | null) {
   markers = [];
   for (const p of items) {
     const popup = new ml.Popup({ offset: 16, closeButton: false }).setHTML(
-      `<b>${esc(titleOf(p))}</b><br>${CATS[p.cat].label}${fix ? " · " + fmtDist(dist(fix, p)) : ""}${p.note ? "<br><i>" + esc(p.note) + "</i>" : ""}<br><a href="${navUrl(p)}" target="_blank" rel="noopener">Prowadź →</a>`,
+      `<b>${esc(titleOf(p))}</b><br>${catOf(p.cat).label}${fix ? " · " + fmtDist(dist(fix, p)) : ""}${p.note ? "<br><i>" + esc(p.note) + "</i>" : ""}<br><a href="${navUrl(p)}" target="_blank" rel="noopener">Prowadź →</a>`,
     );
     const marker = new ml.Marker({ element: xEl(p), draggable: !!p.approx }).setLngLat([p.lng, p.lat]).setPopup(popup).addTo(current);
     if (p.approx) {
@@ -141,6 +141,7 @@ export function MapView() {
   const host = useRef<HTMLDivElement>(null);
   const active = view.value === "map";
   const rev = fixRev.value;
+  const cats = catRev.value;
   const placeSnap = shown.value
     .map((p) => `${p.id}:${p.lat}:${p.lng}:${p.cat}:${p.note}:${p.name}:${p.addr}:${p.approx ? 1 : 0}`)
     .join("|");
@@ -149,7 +150,7 @@ export function MapView() {
     void draw(host.current, shown.value, lastFix.value).catch(() => {
       note.value = "Mapa niedostępna offline. Lista działa normalnie.";
     });
-  }, [active, placeSnap, filter.value, sortNear.value, rev]);
+  }, [active, placeSnap, filter.value, sortNear.value, rev, cats]);
   return (
     <div id="mapWrap" hidden={!active}>
       <div id="map" ref={host} />

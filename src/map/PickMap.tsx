@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "preact/hooks";
 import type { Map as MlMap } from "maplibre-gl";
-import { CATS } from "../core/cats";
+import { catOf } from "../core/cats";
 import type { Cat } from "../core/types";
 import { correctPlace } from "../ui/controller";
 
@@ -47,7 +47,7 @@ export function PickMap({ placeId, lat, lng, cat }: { placeId: string; lat: numb
       const pin = document.createElement("div");
       pin.className = "mx pick";
       pin.dataset.pick = "1";
-      pin.innerHTML = `<svg viewBox="0 0 30 30" style="--c:var(${CATS[c].color})"><rect width="30" height="30" fill="transparent"/><path class="halo" d="M7 7L23 23M23 7L7 23"/><path class="ink" d="M7 7L23 23M23 7L7 23"/></svg>`;
+      pin.innerHTML = `<svg viewBox="0 0 30 30" style="--c:var(${catOf(c).color})"><rect width="30" height="30" fill="transparent"/><path class="halo" d="M7 7L23 23M23 7L7 23"/><path class="ink" d="M7 7L23 23M23 7L7 23"/></svg>`;
       const marker = new ml.Marker({ element: pin, draggable: true }).setLngLat([x, y]).addTo(map);
       let dragging = false;
       let flushing = false;

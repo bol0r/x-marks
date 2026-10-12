@@ -1,4 +1,4 @@
-import { isCat } from "../core/cats";
+import { isBuiltin, isCat, isIcon, isPalette, type CatDef } from "../core/cats";
 import { GALLERY_MAX } from "../core/gallery";
 import type { Place } from "../core/types";
 
@@ -12,6 +12,7 @@ export interface BackupPhoto {
 export interface ImportPlan {
   added: Place[];
   photos: BackupPhoto[];
+  categories: CatDef[];
 }
 
 export function serializeBackup(
@@ -19,31 +20,47 @@ export function serializeBackup(
   photos: Record<string, string>,
   now = new Date(),
   gallery: Record<string, string[]> = {},
+  categories: CatDef[] = [],
 ): string {
   const ordered = Object.keys(gallery).length > 0;
+  const custom = categories.filter((c) => c.id && !isBuiltin(c.id));
   return JSON.stringify({
     app: "x-marks",
-    v: ordered ? 3 : 2,
+    v: ordered || custom.length ? 3 : 2,
     exported: now.toISOString(),
     places,
     photos,
     ...(ordered ? { gallery } : {}),
+    ...(custom.length ? { categories: custom } : {}),
   });
 }
 
 export function planImport(existing: Place[], data: unknown): ImportPlan {
-  const rec = (data && typeof data === "object" ? data : {}) as { places?: unknown; photos?: unknown; gallery?: unknown };
+  const rec = (data && typeof data === "object" ? data : {}) as {
+    places?: unknown;
+    photos?: unknown;
+    gallery?: unknown;
+    categories?: unknown;
+  };
   const arr = Array.isArray(data) ? data : Array.isArray(rec.places) ? rec.places : null;
   if (!arr) throw new Error("format");
   const photos = rec.photos && typeof rec.photos === "object" ? (rec.photos as Record<string, string>) : ({} as Record<string, string>);
   const gallery = rec.gallery && typeof rec.gallery === "object" ? (rec.gallery as Record<string, unknown>) : null;
+  const categories = Array.isArray(rec.categories)
+    ? rec.categories.filter((item): item is CatDef => {
+        if (!item || typeof item !== "object") return false;
+        const c = item as CatDef;
+        return typeof c.id === "string" && typeof c.label === "string" && isPalette(c.color) && isIcon(c.icon) && !isBuiltin(c.id);
+      })
+    : [];
+  const extra = categories.map((c) => c.id);
   const ids = new Set(existing.map((p) => p.id));
   const added: Place[] = [];
   const photoPlan: BackupPhoto[] = [];
   for (const item of arr) {
     if (!item || typeof item !== "object") continue;
     const p = item as Place;
-    if (!(p.id && isCat(p.cat) && Number.isFinite(p.lat) && Number.isFinite(p.lng)) || ids.has(p.id)) continue;
+    if (!(p.id && isCat(p.cat, extra) && Number.isFinite(p.lat) && Number.isFinite(p.lng)) || ids.has(p.id)) continue;
     const q: Place = { ...p };
     const order = Array.isArray(gallery?.[p.id])
       ? (gallery[p.id] as unknown[]).filter((id): id is string => typeof id === "string").slice(0, GALLERY_MAX)
@@ -64,7 +81,7 @@ export function planImport(existing: Place[], data: unknown): ImportPlan {
     added.push(q);
     ids.add(p.id);
   }
-  return { added, photos: photoPlan };
+  return { added, photos: photoPlan, categories };
 }
 
 export function dataURLToBlob(u: string): Blob {
