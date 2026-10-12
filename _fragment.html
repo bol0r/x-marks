@@ -1,0 +1,573 @@
+<title>X Marks</title>
+<meta name="theme-color" content="#11161a">
+<meta name="robots" content="noindex,nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="X Marks">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=Instrument+Serif:ital@1&display=swap">
+<style>
+/* Layout: one-thumb car tool — big category pads at the bottom, list/map above, dark-first */
+:root{
+  --bg:#11161a; --panel:#1a2127; --line:#2a333b; --fg:#e9eef0; --muted:#8d9aa3;
+  --dron:#5ab4ff; --chill:#3fd3a0; --cozy:#ffb347; --danger:#ff6b6b; --ok:#3fd3a0; --mark:#ff5a3c;
+  --on-cat:#0b0f12;
+  --display:"Archivo",ui-sans-serif,system-ui,sans-serif;
+  --body:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#f3f5f6; --panel:#ffffff; --line:#d9dfe3; --fg:#141a1f; --muted:#5d6a73;
+  --dron:#1677d2; --chill:#0f9b6f; --cozy:#c96f00; --danger:#c62828; --ok:#0f9b6f; --mark:#d93b1f; --on-cat:#ffffff;
+  color-scheme:light;
+}}
+:root[data-theme="light"]{
+  --bg:#f3f5f6; --panel:#ffffff; --line:#d9dfe3; --fg:#141a1f; --muted:#5d6a73;
+  --dron:#1677d2; --chill:#0f9b6f; --cozy:#c96f00; --danger:#c62828; --ok:#0f9b6f; --mark:#d93b1f; --on-cat:#ffffff;
+  color-scheme:light;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;margin:0}
+.app{display:flex;flex-direction:column;height:100%;max-width:640px;margin:0 auto;padding-inline:16px;box-sizing:border-box}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:14px 4px}
+h1{font-family:var(--display);font-stretch:125%;font-weight:800;font-size:22px;margin:0;letter-spacing:-.01em}
+.gps{font:12px/1.2 var(--mono);color:var(--muted);display:flex;align-items:center;gap:6px;text-align:right;min-width:0}
+.gps b{color:var(--fg);font-weight:600}
+.dot{flex:none;width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.dot.ok{background:var(--ok)} .dot.warn{background:var(--cozy)} .dot.bad{background:var(--danger)}
+.hint{font-size:13px;color:var(--muted);margin:0 0 6px;line-height:1.4}
+.hint button{font:inherit;color:var(--fg);text-decoration:underline;background:none;border:0;padding:0;cursor:pointer}
+
+.tools{display:flex;gap:6px;padding-block:6px 10px;align-items:center;flex-wrap:wrap}
+.chip{font:600 13px var(--body);border:1px solid var(--line);background:transparent;color:var(--fg);border-radius:999px;padding:7px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.chip .n{font-family:var(--mono);opacity:.7;margin-left:4px;font-variant-numeric:tabular-nums}
+.spacer{flex:1}
+.ghost{background:none;border:0;color:var(--muted);font:600 13px var(--body);cursor:pointer;padding:7px 4px}
+.ghost[aria-pressed="true"]{color:var(--fg)}
+
+main{flex:1;min-height:0;overflow:auto;-webkit-overflow-scrolling:touch}
+.list{display:flex;flex-direction:column;gap:8px;padding-bottom:12px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;grid-template-columns:6px 1fr;gap:12px}
+.item .bar{border-radius:3px;background:var(--c)}
+.item .top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.cat{font-family:var(--display);font-stretch:115%;font-weight:700;color:var(--c);text-transform:uppercase;letter-spacing:.06em;font-size:12px}
+.when{font:12px var(--mono);color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.addr{margin:4px 0 0;font-weight:600;min-width:0;overflow-wrap:anywhere}
+.coords{font:12px var(--mono);color:var(--muted);margin-top:2px;overflow-wrap:anywhere}
+.dist{color:var(--fg)}
+.note{margin-top:6px;white-space:pre-wrap;overflow-wrap:anywhere}
+.acts{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.acts a,.acts button{font:600 13px var(--body);color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 10px;text-decoration:none;cursor:pointer}
+.acts .del.armed{background:var(--danger);border-color:var(--danger);color:var(--on-cat)}
+textarea,input[type=text]{width:100%;box-sizing:border-box;background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:10px;font:16px var(--body)}
+
+.empty{padding:28px 4px;display:flex;flex-direction:column;gap:14px}
+.empty h2{font-family:var(--display);font-stretch:115%;font-size:18px;margin:0}
+.steps{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;color:var(--muted);line-height:1.45}
+.steps b{color:var(--fg)}
+.formats{font:12px var(--mono);color:var(--muted);border:1px dashed var(--line);border-radius:8px;padding:10px;line-height:1.7}
+
+#map{height:100%;min-height:300px;border-radius:12px;border:1px solid var(--line);background:var(--panel)}
+.mapnote{color:var(--muted);font-size:13px;padding:8px 2px}
+
+.pads{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding-block:12px calc(14px + env(safe-area-inset-bottom,0px));border-top:1px solid var(--line)}
+.pad{appearance:none;border:0;border-radius:18px;min-height:96px;background:var(--c);color:var(--on-cat);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-family:var(--display);font-stretch:125%;font-weight:800;font-size:18px;letter-spacing:.02em;text-transform:uppercase;transition:transform .08s}
+.pad:active{transform:scale(.96)}
+.pad svg{width:30px;height:30px}
+.pad[disabled]{opacity:.55}
+.pad small{font:600 11px var(--body);text-transform:none;letter-spacing:0;opacity:.75}
+:focus-visible{outline:3px solid var(--fg);outline-offset:2px}
+
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(140px + env(safe-area-inset-bottom,0px));width:min(92vw,560px);box-sizing:border-box;background:var(--fg);color:var(--bg);border-radius:14px;padding:12px 14px;display:flex;gap:10px;align-items:center;box-shadow:0 8px 30px rgba(0,0,0,.35);z-index:1000}
+.toast p{margin:0;flex:1;min-width:0;font-weight:600}
+.toast small{display:block;font:12px var(--mono);opacity:.7;font-weight:400}
+.toast button{background:transparent;border:1px solid currentColor;color:inherit;border-radius:8px;padding:6px 10px;font:600 13px var(--body);cursor:pointer}
+
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:1001}
+.sheet .box{background:var(--panel);width:100%;max-width:640px;max-height:90%;overflow:auto;border-radius:18px 18px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));box-sizing:border-box;display:flex;flex-direction:column;gap:10px}
+.sheet h2{font-family:var(--display);font-stretch:115%;margin:0;font-size:18px}
+.sheet p{margin:0;color:var(--muted);font-size:14px;line-height:1.45}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;font:700 14px var(--display);font-stretch:115%;text-transform:uppercase;letter-spacing:.04em;border-radius:10px;padding:10px 6px;border:2px solid var(--c);background:transparent;color:var(--c);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--c);color:var(--on-cat)}
+.preview{font:13px var(--mono);border-radius:8px;padding:10px;background:var(--bg);border:1px solid var(--line);min-height:20px;line-height:1.5;overflow-wrap:anywhere}
+.preview.good{border-color:var(--ok)} .preview.good b{color:var(--ok)}
+.preview.bad{border-color:var(--danger);color:var(--fg);font-family:var(--body)}
+.row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.btn{font:700 14px var(--body);border-radius:10px;padding:10px 14px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer}
+.btn.primary{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+.btn[disabled]{opacity:.4;cursor:default}
+.msg{color:var(--muted);font-size:13px}
+@media (prefers-reduced-motion: reduce){.pad{transition:none}}
+/* ---------- ekran startowy: X Marks the Spot ---------- */
+.hx{color:var(--mark)}
+.splash{position:fixed;inset:0;z-index:2000;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:24px;cursor:pointer;transition:opacity .35s ease, visibility .35s}
+.splash.out{opacity:0;visibility:hidden}
+.motto{display:flex;flex-direction:column;align-items:flex-start;line-height:1}
+.brand{position:relative;display:flex;align-items:center;gap:.12em;font-family:var(--display);font-stretch:125%;font-weight:900;font-size:clamp(52px,17vw,96px);letter-spacing:-.02em;text-transform:uppercase;padding-bottom:.16em}
+.brand .x{width:.9em;height:.9em;flex:none}
+.brand .x path{fill:none;stroke:var(--mark);stroke-width:17;stroke-linecap:round;stroke-dasharray:100;stroke-dashoffset:100;animation:draw .32s cubic-bezier(.6,0,.3,1) forwards}
+.brand .x path+path{animation-delay:.28s}
+.brand .word{opacity:0;transform:translateX(-.15em);animation:slide .4s .45s ease-out forwards}
+.trail{position:absolute;left:.04em;right:.02em;bottom:0;height:.075em;background:repeating-linear-gradient(90deg,var(--mark) 0 .16em,transparent .16em .3em);clip-path:inset(0 100% 0 0);animation:reveal .55s .7s ease-in-out forwards}
+.rest{font-family:var(--serif);font-style:italic;font-size:clamp(34px,11vw,62px);color:var(--muted);margin-top:.12em;margin-left:auto;opacity:0;animation:fade .45s 1.05s ease-out forwards}
+.by{font:600 12px var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:0;opacity:0;animation:fade .4s 1.3s forwards}
+.by .bx{color:var(--mark)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes slide{to{opacity:1;transform:none}}
+@keyframes reveal{to{clip-path:inset(0 0 0 0)}}
+@keyframes fade{to{opacity:1}}
+@media (prefers-reduced-motion: reduce){
+  .brand .x path,.brand .word,.trail,.rest,.by{animation:none;opacity:1;transform:none;stroke-dashoffset:0;clip-path:none}
+  .splash{transition:none}
+}
+
+</style>
+
+<div class="splash" id="splash" aria-label="X Marks the Spot. by Dead Net x Claude">
+  <div class="motto" aria-hidden="true">
+    <span class="brand">
+      <svg class="x" viewBox="0 0 100 100"><path pathLength="100" d="M16 14 L84 86"/><path pathLength="100" d="M84 14 L16 86"/></svg><span class="sr">X</span>
+      <span class="word">Marks</span>
+      <i class="trail"></i>
+    </span>
+    <span class="rest">the Spot</span>
+  </div>
+  <p class="by" aria-hidden="true">by Dead Net <span class="bx">x</span> Claude</p>
+</div>
+
+<div class="app">
+  <header>
+    <h1><span class="hx">X</span> Marks</h1>
+    <div class="gps" id="gps" aria-live="polite"><i class="dot" id="gpsDot"></i><span id="gpsTxt">GPS: szukam</span></div>
+  </header>
+  <p class="hint" id="gpsHint" hidden></p>
+  <p class="hint" id="backupHint" hidden>Twoje miejsca są tylko na tym telefonie. <button id="backupNow">Zapisz kopię</button></p>
+
+  <div class="tools" role="toolbar" aria-label="Widok">
+    <button class="chip" data-f="all" aria-pressed="true">Wszystkie<span class="n" id="n-all">0</span></button>
+    <button class="chip" data-f="dron" aria-pressed="false">Dron<span class="n" id="n-dron">0</span></button>
+    <button class="chip" data-f="chill" aria-pressed="false">Chill<span class="n" id="n-chill">0</span></button>
+    <button class="chip" data-f="cozy" aria-pressed="false">Cozy<span class="n" id="n-cozy">0</span></button>
+    <span class="spacer"></span>
+    <button class="ghost" id="sortBtn" aria-pressed="false" hidden>Najbliżej</button>
+    <button class="ghost" id="pasteBtn">Wklej</button>
+    <button class="ghost" id="viewBtn">Mapa</button>
+    <button class="ghost" id="moreBtn">Dane</button>
+  </div>
+
+  <main id="main">
+    <div class="list" id="list"></div>
+    <div id="mapWrap" hidden><div id="map"></div><div class="mapnote" id="mapNote"></div></div>
+  </main>
+
+  <nav class="pads" aria-label="Zapisz miejsce, w którym jesteś">
+    <button class="pad" data-cat="dron" style="--c:var(--dron)">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="7" cy="7" r="4"/><circle cx="25" cy="7" r="4"/><circle cx="7" cy="25" r="4"/><circle cx="25" cy="25" r="4"/><path d="M10 10l12 12M22 10L10 22"/><rect x="13" y="13" width="6" height="6" rx="1.5" fill="currentColor"/></svg>
+      Dron<small class="padsub"></small></button>
+    <button class="pad" data-cat="chill" style="--c:var(--chill)">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22c4-3 8-3 12 0s8 3 12 0"/><path d="M16 4l-6 12h12z"/><path d="M16 16v3"/></svg>
+      Chill<small class="padsub"></small></button>
+    <button class="pad" data-cat="cozy" style="--c:var(--cozy)">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 13h17v7a7 7 0 0 1-7 7h-3a7 7 0 0 1-7-7z"/><path d="M23 15h2a3 3 0 0 1 0 6h-2"/><path d="M11 4c0 2 2 2 2 4M16 4c0 2 2 2 2 4"/></svg>
+      Cozy<small class="padsub"></small></button>
+  </nav>
+</div>
+
+<script>
+/* ---------- ekran startowy ---------- */
+(function(){
+  const sp = document.getElementById("splash"); if(!sp) return;
+  const quick = /^#(dron|chill|cozy)$/i.test(location.hash);
+  const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const hide = () => { sp.classList.add("out"); setTimeout(() => sp.remove(), 400); };
+  if(quick){ sp.remove(); return; }
+  sp.addEventListener("click", hide);
+  setTimeout(hide, reduce ? 1100 : 2100);
+})();
+/*OLC*/
+(function(){
+"use strict";
+const CATS = {dron:{label:"Dron",color:"--dron"}, chill:{label:"Chill",color:"--chill"}, cozy:{label:"Cozy",color:"--cozy"}};
+const KEY = "xmarks.v1", OLD_KEY = "pinezki.v1";
+const $ = s => document.querySelector(s);
+const inFrame = (() => { try{ return window.self !== window.top; }catch(e){ return true; } })();
+let places = load().filter(p => !String(p.id).startsWith("ex"));
+let filter = "all", view = "list", sortNear = false;
+let lastFix = null, gpsOk = null;    // gpsOk: null = nie wiadomo, true, false
+let toastTimer = null, map = null, layer = null;
+
+/* ---------- storage ---------- */
+function load(){ try{ const r = localStorage.getItem(KEY) || localStorage.getItem(OLD_KEY); const a = r ? JSON.parse(r) : []; return Array.isArray(a) ? a : []; }catch(e){ return []; } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(places)); }catch(e){} }
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+
+/* ---------- GPS ---------- */
+function setGps(state, html){ $("#gpsDot").className = "dot " + state; $("#gpsTxt").innerHTML = html; }
+function gpsDown(reason){
+  gpsOk = false;
+  setGps("bad", reason);
+  const h = $("#gpsHint");
+  h.innerHTML = inFrame
+    ? "Ten podgląd nie ma dostępu do GPS. Przycisk kategorii otworzy wklejanie pozycji. Pełna wersja z GPS działa po wrzuceniu plików na własny adres HTTPS."
+    : "Telefon nie podaje lokalizacji. Włącz ją dla przeglądarki w Ustawieniach, a do tego czasu przyciski otworzą wklejanie pozycji.";
+  h.hidden = false;
+  document.querySelectorAll(".padsub").forEach(s => s.textContent = "wklej pozycję");
+  if(pendingHash){ const c = pendingHash; pendingHash = null; pasteSheet(c); }
+}
+function onFix(p){
+  lastFix = {lat:p.coords.latitude, lng:p.coords.longitude, acc:Math.round(p.coords.accuracy), t:Date.now()};
+  gpsOk = true; $("#gpsHint").hidden = true;
+  document.querySelectorAll(".padsub").forEach(s => s.textContent = "");
+  setGps(lastFix.acc <= 30 ? "ok" : "warn", "<b>±" + lastFix.acc + " m</b>&nbsp;" + olcEncode(lastFix.lat, lastFix.lng));
+  $("#sortBtn").hidden = !places.length;
+  if(pendingHash){ const c = pendingHash; pendingHash = null; addAtHere(c, document.querySelector(`.pad[data-cat="${c}"]`)); }
+  else if(sortNear || places.length) render();
+}
+function startWatch(){
+  if(!("geolocation" in navigator)){ gpsDown("GPS: brak"); return; }
+  try{
+    navigator.geolocation.watchPosition(onFix, err => {
+      if(err.code === 1 || !lastFix) gpsDown(err.code === 1 ? "GPS: zablokowany" : "GPS: brak sygnału");
+    }, {enableHighAccuracy:true, maximumAge:10000, timeout:20000});
+  }catch(e){ gpsDown("GPS: brak"); }
+}
+function getFix(){
+  if(lastFix && Date.now() - lastFix.t < 15000) return Promise.resolve(lastFix);
+  return new Promise((res, rej) => {
+    if(gpsOk === false || !("geolocation" in navigator)) return rej(new Error("nogeo"));
+    try{
+      navigator.geolocation.getCurrentPosition(p => { onFix(p); res(lastFix); }, rej, {enableHighAccuracy:true, maximumAge:15000, timeout:12000});
+    }catch(e){ rej(e); }
+  });
+}
+
+/* ---------- add ---------- */
+function addPlace(cat, lat, lng, acc, src){
+  const p = {id:uid(), cat, lat:+(+lat).toFixed(6), lng:+(+lng).toFixed(6), acc:acc ?? null, ts:Date.now(), note:"", addr:"", src:src || "gps"};
+  places.unshift(p); save(); render(); toast(p); reverseGeocode(p);
+  try{ navigator.vibrate && navigator.vibrate(40); }catch(e){}
+  return p;
+}
+async function addAtHere(cat, btn){
+  if(btn) btn.disabled = true;
+  try{ const f = await getFix(); addPlace(cat, f.lat, f.lng, f.acc, "gps"); }
+  catch(e){ pasteSheet(cat); }
+  finally{ if(btn) btn.disabled = false; }
+}
+async function reverseGeocode(p){
+  try{
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=16&accept-language=pl&lat=${p.lat}&lon=${p.lng}`);
+    if(!r.ok) return;
+    const j = await r.json(), a = j.address || {};
+    const parts = [a.road || a.hamlet || a.neighbourhood || a.suburb || a.village, a.suburb !== (a.road || a.hamlet) ? a.suburb : null, a.city || a.town || a.village || a.county];
+    const addr = [...new Set(parts.filter(Boolean))].slice(0, 3).join(", ");
+    const it = places.find(x => x.id === p.id);
+    if(addr && it){ it.addr = addr; save(); render(); }
+  }catch(e){ /* offline albo zablokowane: zostają współrzędne i Plus Code */ }
+}
+function refPoint(){
+  if(lastFix) return {lat:lastFix.lat, lng:lastFix.lng, label:"Twoja pozycja"};
+  if(places.length) return {lat:places[0].lat, lng:places[0].lng, label:"ostatnie miejsce"};
+  return null;
+}
+
+/* ---------- toast ---------- */
+function toast(p){
+  closeToast();
+  const el = document.createElement("div");
+  el.className = "toast"; el.id = "toast"; el.setAttribute("role","status");
+  el.innerHTML = `<p>Zapisano: ${CATS[p.cat].label}<small>${p.acc != null ? "±" + p.acc + " m · " : ""}${olcEncode(p.lat, p.lng)}</small></p>
+    <button data-a="note">Notatka</button><button data-a="undo">Cofnij</button>`;
+  el.addEventListener("click", e => {
+    const a = e.target.dataset.a;
+    if(a === "undo"){ places = places.filter(x => x.id !== p.id); save(); render(); closeToast(); }
+    if(a === "note"){ closeToast(); noteSheet(p.id); }
+  });
+  document.body.appendChild(el);
+  toastTimer = setTimeout(closeToast, 6000);
+}
+function closeToast(){ clearTimeout(toastTimer); const t = $("#toast"); if(t) t.remove(); }
+
+/* ---------- sheets ---------- */
+function sheet(html, onReady){
+  const s = document.createElement("div");
+  s.className = "sheet"; s.innerHTML = `<div class="box" role="dialog" aria-modal="true">${html}</div>`;
+  s.addEventListener("click", e => { if(e.target === s) s.remove(); });
+  const esc = e => { if(e.key === "Escape"){ s.remove(); document.removeEventListener("keydown", esc); } };
+  document.addEventListener("keydown", esc);
+  document.body.appendChild(s); onReady(s); return s;
+}
+function noteSheet(id){
+  const p = places.find(x => x.id === id); if(!p) return;
+  sheet(`<h2>Notatka · ${CATS[p.cat].label}</h2>
+    <textarea id="noteTxt" rows="4" placeholder="np. wjazd od polnej drogi, ładny zachód słońca, cisza">${esc(p.note)}</textarea>
+    <div class="row"><button class="btn" data-a="x">Anuluj</button><button class="btn primary" data-a="ok">Zapisz</button></div>`, s => {
+    const ta = s.querySelector("#noteTxt"); ta.focus();
+    s.querySelector('[data-a="x"]').onclick = () => s.remove();
+    s.querySelector('[data-a="ok"]').onclick = () => { p.note = ta.value.trim(); save(); render(); s.remove(); };
+  });
+}
+function pasteSheet(cat){
+  let chosen = cat || (filter !== "all" ? filter : "dron");
+  sheet(`<h2>Dodaj miejsce z Map</h2>
+    <p>Wklej link z Map Google lub Apple, Plus Code (np. <b>425J+XR Wrocław</b>) albo współrzędne.</p>
+    <input type="text" id="pasteIn" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Wklej tutaj">
+    <div class="preview" id="pastePrev" aria-live="polite">Czekam na pozycję…</div>
+    <div class="seg" id="pasteCat">${Object.keys(CATS).map(k => `<button data-c="${k}" style="--c:var(${CATS[k].color})" aria-pressed="${k === chosen}">${CATS[k].label}</button>`).join("")}</div>
+    <p style="font-size:13px">Skrócony link z „Udostępnij” (maps.app.goo.gl) nie zawiera pozycji. W Mapach Google przytrzymaj palec na miejscu i skopiuj współrzędne albo Plus Code z karty miejsca.</p>
+    <div class="row"><button class="btn" data-a="x">Anuluj</button><button class="btn primary" data-a="ok" disabled>Dodaj</button></div>`, s => {
+    const inp = s.querySelector("#pasteIn"), prev = s.querySelector("#pastePrev"), ok = s.querySelector('[data-a="ok"]');
+    let parsed = null;
+    const check = () => {
+      const r = parsePlace(inp.value, refPoint());
+      if(r.error === ""){ parsed = null; prev.className = "preview"; prev.textContent = "Czekam na pozycję…"; }
+      else if(r.error){ parsed = null; prev.className = "preview bad"; prev.textContent = r.error; }
+      else { parsed = r; prev.className = "preview good"; prev.innerHTML = `<b>Mam to</b> · ${esc(r.src)}${r.info ? " · " + esc(r.info) : ""}<br>${r.lat.toFixed(5)}, ${r.lng.toFixed(5)} · ${olcEncode(r.lat, r.lng)}${lastFix ? " · " + fmtDist(dist(lastFix, r)) + " stąd" : ""}`; }
+      ok.disabled = !parsed;
+    };
+    inp.addEventListener("input", check);
+    inp.addEventListener("keydown", e => { if(e.key === "Enter" && parsed) ok.click(); });
+    s.querySelector("#pasteCat").addEventListener("click", e => {
+      const b = e.target.closest("button[data-c]"); if(!b) return;
+      chosen = b.dataset.c; s.querySelectorAll("#pasteCat button").forEach(x => x.setAttribute("aria-pressed", x === b));
+    });
+    s.querySelector('[data-a="x"]').onclick = () => s.remove();
+    ok.onclick = () => { if(!parsed) return; addPlace(chosen, parsed.lat, parsed.lng, null, parsed.src); s.remove(); };
+    inp.focus();
+  });
+}
+function dataSheet(){
+  sheet(`<h2>Dane</h2>
+    <p>Miejsca są zapisane tylko na tym telefonie (${places.length} szt.). Nikt inny ich nie widzi, nawet z tym samym adresem. Ostatnia kopia: <b>${lastBackupTxt()}</b>.</p>
+    <p><b>Zapisz kopię</b> otwiera menu udostępniania: wybierz „Zachowaj w Plikach” (iCloud Drive) albo Dysk Google. Ten plik wczytasz z powrotem przez „Importuj” na dowolnym telefonie.</p>
+    <div class="row" style="justify-content:flex-start">
+      <button class="btn primary" data-a="backup">Zapisz kopię</button>
+      <button class="btn" data-a="copy">Kopiuj JSON</button>
+      <button class="btn" data-a="gpx">Pobierz GPX</button>
+      <button class="btn" data-a="json">Pobierz JSON</button>
+      <label class="btn" for="impFile">Importuj JSON</label>
+      <input type="file" id="impFile" accept="application/json,.json" hidden>
+    </div>
+    <div class="msg" id="dataMsg" hidden></div>
+    <div class="row"><button class="btn primary" data-a="x">Zamknij</button></div>`, s => {
+    const msg = t => { const m = s.querySelector("#dataMsg"); m.hidden = false; m.textContent = t; };
+    s.querySelector('[data-a="x"]').onclick = () => s.remove();
+    s.querySelector('[data-a="copy"]').onclick = () => {
+      const txt = JSON.stringify(places, null, 2);
+      try{ navigator.clipboard.writeText(txt).then(() => msg("Skopiowano " + places.length + " miejsc."), () => msg("Schowek zablokowany. Użyj Pobierz JSON.")); }
+      catch(e){ msg("Schowek zablokowany. Użyj Pobierz JSON."); }
+    };
+    s.querySelector('[data-a="backup"]').onclick = () => backup(msg);
+    s.querySelector('[data-a="json"]').onclick = () => dl("xmarks.json", JSON.stringify(places, null, 2), "application/json", msg);
+    s.querySelector('[data-a="gpx"]').onclick = () => dl("xmarks.gpx", toGPX(), "application/gpx+xml", msg);
+    s.querySelector("#impFile").onchange = e => {
+      const f = e.target.files[0]; if(!f) return;
+      f.text().then(t => {
+        const arr = JSON.parse(t); if(!Array.isArray(arr)) throw 0;
+        const ids = new Set(places.map(p => p.id)); let n = 0;
+        arr.forEach(p => { if(p && p.id && CATS[p.cat] && isFinite(p.lat) && isFinite(p.lng) && !ids.has(p.id)){ places.push(p); n++; } });
+        places.sort((a,b) => b.ts - a.ts); save(); render(); msg("Dodano " + n + " miejsc.");
+      }).catch(() => msg("To nie jest kopia z X Marks."));
+    };
+  });
+}
+/* ---------- kopia zapasowa ---------- */
+const BK = "xmarks.lastBackup";
+function getLastBackup(){ try{ return JSON.parse(localStorage.getItem(BK) || "null"); }catch(e){ return null; } }
+function lastBackupTxt(){ const b = getLastBackup(); return b ? fmtWhen(b.ts) + ` (${b.n} szt.)` : "nigdy"; }
+async function backup(msg){
+  const d = new Date(), stamp = d.toISOString().slice(0, 10);
+  const name = `xmarks-${stamp}.json`, text = JSON.stringify(places, null, 2);
+  const file = new File([text], name, {type:"application/json"});
+  const mark = () => { try{ localStorage.setItem(BK, JSON.stringify({ts:Date.now(), n:places.length})); }catch(e){} renderBackupHint(); };
+  try{
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:"X Marks – kopia " + stamp});
+      mark(); msg && msg("Kopia zapisana."); return;
+    }
+  }catch(e){ if(e && e.name === "AbortError"){ msg && msg("Anulowano."); return; } }
+  await dl(name, text, "application/json", msg); mark(); msg && msg("Plik " + name + " pobrany.");
+}
+function renderBackupHint(){
+  const el = $("#backupHint"); if(!el) return;
+  const b = getLastBackup();
+  const stale = places.length >= 3 && (!b || (Date.now() - b.ts > 7 * 864e5 && places.length !== b.n));
+  el.hidden = !stale;
+}
+
+async function dl(name, text, type, msg){
+  const blob = new Blob([text], {type});
+  try{
+    const d = window.claude && window.claude.use ? await window.claude.use("downloads") : null;
+    if(d){ await d.save({filename:name, data:blob}); return; }
+  }catch(e){ msg && msg("Nie zapisano pliku."); return; }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+function toGPX(){
+  const wpts = places.map(p => `  <wpt lat="${p.lat}" lon="${p.lng}"><time>${new Date(p.ts).toISOString()}</time><name>${esc(CATS[p.cat].label + (p.addr ? " · " + p.addr : ""))}</name><desc>${esc(p.note)}</desc><type>${p.cat}</type></wpt>`).join("\n");
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="X Marks" xmlns="http://www.topografix.com/GPX/1/1">\n${wpts}\n</gpx>`;
+}
+
+/* ---------- helpers ---------- */
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmtCoords = p => `${(+p.lat).toFixed(5)}, ${(+p.lng).toFixed(5)}`;
+function dist(a, b){
+  const R = 6371000, r = x => x * Math.PI / 180;
+  const dLat = r(b.lat - a.lat), dLng = r(b.lng - a.lng);
+  const h = Math.sin(dLat/2) ** 2 + Math.cos(r(a.lat)) * Math.cos(r(b.lat)) * Math.sin(dLng/2) ** 2;
+  return 2 * R * Math.asin(Math.sqrt(h));
+}
+const fmtDist = m => m < 25 ? "tutaj" : m < 1000 ? Math.round(m / 10) * 10 + " m" : (m < 10000 ? (m / 1000).toFixed(1).replace(".", ",") : Math.round(m / 1000)) + " km";
+function fmtWhen(ts){
+  const d = new Date(ts), now = new Date();
+  const hm = d.toLocaleTimeString("pl-PL", {hour:"2-digit", minute:"2-digit"});
+  if(d.toDateString() === now.toDateString()) return "dziś " + hm;
+  const y = new Date(now); y.setDate(now.getDate() - 1);
+  if(d.toDateString() === y.toDateString()) return "wczoraj " + hm;
+  return d.toLocaleDateString("pl-PL", {day:"numeric", month:"short"}) + " " + hm;
+}
+async function copy(text, btn){
+  const old = btn.textContent;
+  try{ await navigator.clipboard.writeText(text); btn.textContent = "Skopiowano"; }
+  catch(e){ btn.textContent = text; }
+  setTimeout(() => { if(btn.isConnected) btn.textContent = old; }, 1600);
+}
+
+/* ---------- render ---------- */
+function itemHTML(p){
+  const nav = `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}`;
+  const code = olcEncode(p.lat, p.lng);
+  return `<article class="item" style="--c:var(${CATS[p.cat].color})" data-id="${esc(p.id)}">
+    <div class="bar"></div>
+    <div style="min-width:0">
+      <div class="top"><span class="cat">${CATS[p.cat].label}</span><span class="when">${fmtWhen(p.ts)}</span></div>
+      ${p.addr ? `<p class="addr">${esc(p.addr)}</p>` : ""}
+      <div class="coords">${lastFix ? `<span class="dist">${fmtDist(dist(lastFix, p))}</span> · ` : ""}${code} · ${fmtCoords(p)}${p.acc != null ? " · ±" + p.acc + " m" : ""}</div>
+      ${p.note ? `<div class="note">${esc(p.note)}</div>` : ""}
+      <div class="acts">
+        <a href="${nav}" target="_blank" rel="noopener">Prowadź</a>
+        <button data-a="copy">Kopiuj</button>
+        <button data-a="note">${p.note ? "Notatka" : "Dodaj notatkę"}</button>
+        <button data-a="cat">Kategoria</button>
+        <button data-a="del" class="del">Usuń</button>
+      </div>
+    </div></article>`;
+}
+function render(){
+  const counts = {all:places.length, dron:0, chill:0, cozy:0};
+  places.forEach(p => { if(counts[p.cat] != null) counts[p.cat]++; });
+  Object.keys(counts).forEach(k => $("#n-" + k).textContent = counts[k]);
+  $("#sortBtn").hidden = !(lastFix && places.length);
+  let shown = places.filter(p => filter === "all" || p.cat === filter);
+  if(sortNear && lastFix) shown = shown.slice().sort((a, b) => dist(lastFix, a) - dist(lastFix, b));
+  const list = $("#list");
+  if(!places.length){
+    list.innerHTML = `<div class="empty">
+      <h2>Nie masz jeszcze miejsc</h2>
+      <ol class="steps">
+        <li>Jesteś w fajnym miejscu: stuknij <b>Dron</b>, <b>Chill</b> albo <b>Cozy</b>. Pozycja i godzina zapiszą się same.</li>
+        <li>Notatkę dopiszesz od razu z dymka albo później z listy.</li>
+        <li>Miejsce z Map Google dodasz przez <b>Wklej</b>.</li>
+      </ol>
+      <div class="formats">Wklej rozumie:<br>link z Map Google / Apple<br>Plus Code: 9F3V425J+XR albo 425J+XR Wrocław<br>51.10994, 17.03203 · 51°06'36"N 17°01'55"E</div>
+    </div>`;
+  }else if(!shown.length){
+    list.innerHTML = `<div class="empty"><p class="hint">Brak miejsc w tej kategorii.</p></div>`;
+  }else{
+    list.innerHTML = shown.map(itemHTML).join("");
+  }
+  if(view === "map") drawMap();
+  renderBackupHint();
+}
+$("#list").addEventListener("click", e => {
+  const b = e.target.closest("button[data-a]"); if(!b) return;
+  const card = b.closest(".item"); if(!card) return;
+  const id = card.dataset.id, p = places.find(x => x.id === id); if(!p) return;
+  const a = b.dataset.a;
+  if(a === "copy") copy(`${olcEncode(p.lat, p.lng)} (${fmtCoords(p)})`, b);
+  if(a === "note") noteSheet(id);
+  if(a === "cat"){ const ks = Object.keys(CATS); p.cat = ks[(ks.indexOf(p.cat) + 1) % ks.length]; save(); render(); }
+  if(a === "del"){
+    if(b.classList.contains("armed")){ places = places.filter(x => x.id !== id); save(); render(); }
+    else { b.classList.add("armed"); b.textContent = "Na pewno?"; setTimeout(() => { if(b.isConnected){ b.classList.remove("armed"); b.textContent = "Usuń"; } }, 3000); }
+  }
+});
+
+/* ---------- map ---------- */
+function loadLeaflet(){
+  if(window.L) return Promise.resolve();
+  return new Promise((res, rej) => {
+    const css = document.createElement("link"); css.rel = "stylesheet"; css.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"; document.head.appendChild(css);
+    const s = document.createElement("script"); s.src = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
+    s.onload = res; s.onerror = rej; document.head.appendChild(s);
+  });
+}
+async function drawMap(){
+  try{ await loadLeaflet(); }catch(e){ $("#mapNote").textContent = "Mapa niedostępna offline. Lista działa normalnie."; return; }
+  if(!map){
+    map = L.map("map", {zoomControl:false});
+    const tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom:19, attribution:"© OpenStreetMap"}).addTo(map);
+    tiles.on("tileerror", () => { $("#mapNote").textContent = inFrame ? "W podglądzie Claude podkład mapy się nie wczytuje. Na własnym adresie działa." : "Podkład mapy się nie wczytał (brak internetu)."; });
+    layer = L.layerGroup().addTo(map);
+  }
+  layer.clearLayers();
+  const cs = getComputedStyle(document.documentElement);
+  const shown = places.filter(p => filter === "all" || p.cat === filter);
+  shown.forEach(p => {
+    L.circleMarker([p.lat, p.lng], {radius:9, weight:2, color:"#fff", fillColor:cs.getPropertyValue(CATS[p.cat].color).trim(), fillOpacity:1})
+      .bindPopup(`<b>${CATS[p.cat].label}</b><br>${esc(p.addr || fmtCoords(p))}${p.note ? "<br>" + esc(p.note) : ""}<br><a href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}" target="_blank" rel="noopener">Prowadź</a>`)
+      .addTo(layer);
+  });
+  if(lastFix) L.circleMarker([lastFix.lat, lastFix.lng], {radius:6, color:"#5ab4ff", weight:3, fillOpacity:.3}).addTo(layer);
+  setTimeout(() => {
+    map.invalidateSize();
+    if(shown.length) map.fitBounds(shown.map(p => [p.lat, p.lng]), {padding:[30,30], maxZoom:15});
+    else map.setView(lastFix ? [lastFix.lat, lastFix.lng] : [51.107, 17.038], 12);
+  }, 50);
+}
+
+/* ---------- wiring ---------- */
+document.querySelectorAll(".pad").forEach(b => b.addEventListener("click", () => {
+  if(gpsOk === false) pasteSheet(b.dataset.cat); else addAtHere(b.dataset.cat, b);
+}));
+document.querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => {
+  filter = c.dataset.f;
+  document.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x === c));
+  render();
+}));
+$("#sortBtn").addEventListener("click", () => { sortNear = !sortNear; $("#sortBtn").setAttribute("aria-pressed", sortNear); render(); });
+$("#pasteBtn").addEventListener("click", () => pasteSheet());
+$("#viewBtn").addEventListener("click", () => {
+  view = view === "list" ? "map" : "list";
+  $("#viewBtn").textContent = view === "list" ? "Mapa" : "Lista";
+  $("#list").hidden = view !== "list"; $("#mapWrap").hidden = view !== "map";
+  if(view === "map") drawMap();
+});
+$("#moreBtn").addEventListener("click", dataSheet);
+$("#backupNow").addEventListener("click", () => backup());
+// prośba, by przeglądarka nie czyściła danych przy braku miejsca
+try{ navigator.storage && navigator.storage.persist && navigator.storage.persist(); }catch(e){}
+
+// Szybki zapis z ikonki / Skrótu iOS: adres#dron, #chill, #cozy
+let pendingHash = null;
+const h = (location.hash || "").slice(1).toLowerCase();
+if(CATS[h]){ pendingHash = h; try{ history.replaceState(null, "", location.pathname + location.search); }catch(e){} }
+
+if("serviceWorker" in navigator && location.protocol === "https:" && !inFrame){
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+save();   // utrwala usunięcie starych przykładów
+render();
+startWatch();
+})();
+</script>

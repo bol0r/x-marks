@@ -1,0 +1,2 @@
+# Decyzje agenta
+

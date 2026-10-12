@@ -1,0 +1,21 @@
+---
+description: Zasady pracy agenta w projekcie X Marks
+alwaysApply: true
+---
+# Tryb pracy: samodzielnie, bez pytań
+
+- Pracujesz sam od początku do końca. Nie pytaj o zgodę ani o wybór, gdy da się rozsądnie zdecydować. Decyzję zapisz jednym zdaniem w `DECISIONS.md`.
+- Bierzesz kolejne niezaznaczone `- [ ]` z `PLAN.md`, po kolei, etapami.
+- Po każdym punkcie: `npm test` → `npm run build` → zaznacz `- [x]` w PLAN.md → `git add -A && git commit -m "<krótko po polsku>"`. Potem następny punkt.
+- Test czerwony: napraw (max 3 podejścia). Dalej czerwony: cofnij zmiany punktu (`git checkout .`), dopisz problem do `DECISIONS.md` jako „ZABLOKOWANE”, idź dalej.
+- Zatrzymujesz się TYLKO gdy punkt wymaga konta, klucza API, płatności albo danych logowania. Wtedy pomiń go, opisz w `DECISIONS.md`, idź dalej.
+
+# Kod
+
+- Źródła: `_fragment.html` (UI + logika) i `olc.js` (Plus Code + parser). `index.html` i `_artifact.html` są GENEROWANE przez `npm run build` — nie edytuj ich ręcznie.
+- Vanilla JS, zero frameworków i bundlerów. Biblioteki tylko z cdnjs, z przypiętą wersją.
+- Teksty w UI po polsku, krótko, z perspektywy użytkownika.
+- Dane w localStorage pod `xmarks.v1` (stary klucz `pinezki.v1` jest migrowany przy wczytaniu). Zmiana formatu = migracja przy wczytaniu, nigdy utrata danych.
+- Nowa logika bez DOM (parsowanie, liczenie, formaty) idzie do osobnego pliku `.js` z testem w `tests/`.
+- Apka ma działać jednym kciukiem w aucie: duże przyciski, zapis jednym stuknięciem, bez potwierdzeń przy zapisie.
+- Nie usuwaj plików i nie wychodź poza folder projektu.

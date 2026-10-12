@@ -1,0 +1,1 @@
+Przeczytaj PLAN.md i .cursor/rules/x-marks.mdc. Realizuj wszystkie niezaznaczone punkty z PLAN.md po kolei, samodzielnie, bez zadawania mi pytań, dokładnie według zasad z pliku reguł. Na koniec wypisz w 5 linijkach, co zrobiłeś i co jest w DECISIONS.md jako ZABLOKOWANE.
