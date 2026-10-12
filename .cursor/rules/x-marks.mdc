@@ -4,18 +4,23 @@ alwaysApply: true
 ---
 # Tryb pracy: samodzielnie, bez pytań
 
-- Pracujesz sam od początku do końca. Nie pytaj o zgodę ani o wybór, gdy da się rozsądnie zdecydować. Decyzję zapisz jednym zdaniem w `DECISIONS.md`.
-- Bierzesz kolejne niezaznaczone `- [ ]` z `PLAN.md`, po kolei, etapami.
-- Po każdym punkcie: `npm test` → `npm run build` → zaznacz `- [x]` w PLAN.md → `git add -A && git commit -m "<krótko po polsku>"`. Potem następny punkt.
-- Test czerwony: napraw (max 3 podejścia). Dalej czerwony: cofnij zmiany punktu (`git checkout .`), dopisz problem do `DECISIONS.md` jako „ZABLOKOWANE”, idź dalej.
-- Zatrzymujesz się TYLKO gdy punkt wymaga konta, klucza API, płatności albo danych logowania. Wtedy pomiń go, opisz w `DECISIONS.md`, idź dalej.
+- Plan jest w `ROADMAP.md`. Bierzesz kolejne niezaznaczone `- [ ]` od góry, faza po fazie. Nie przeskakuj faz.
+- Każdy punkt ma warunek „Gotowe gdy”. Punkt jest skończony dopiero, gdy warunek jest spełniony i spełniona jest „Definicja gotowe” (sekcja 6).
+- Po każdym punkcie: testy → build → zaznacz `- [x]` w ROADMAP.md → jedna linia w `CHANGELOG.md` → `git add -A && git commit -m "<krótko po polsku>" && git push`.
+- Nie pytasz mnie o zgodę ani o wybór, gdy da się rozsądnie zdecydować. Decyzję zapisz jednym zdaniem w `DECISIONS.md`.
+- Czerwony test: napraw (max 3 podejścia). Dalej czerwony: cofnij zmiany punktu (`git checkout .`), wpisz w `DECISIONS.md` jako „ZABLOKOWANE: …” i idź dalej.
+- Punkt wymaga konta, klucza API, płatności, DNS albo logowania: przygotuj kod za flagą, opisz kroki konfiguracji w `DECISIONS.md` jako „ZABLOKOWANE: …”, idź dalej.
+
+# Trzy obietnice (nie łam ich nigdy)
+1. Zapis miejsca = jedno stuknięcie, bez potwierdzeń, bez patrzenia.
+2. Działa offline.
+3. Dane użytkownika nie giną: każda zmiana formatu ma migrację i test migracji. Eksport zawsze pełny.
 
 # Kod
-
-- Źródła: `_fragment.html` (UI + logika) i `olc.js` (Plus Code + parser). `index.html` i `_artifact.html` są GENEROWANE przez `npm run build` — nie edytuj ich ręcznie.
-- Vanilla JS, zero frameworków i bundlerów. Biblioteki tylko z cdnjs, z przypiętą wersją.
-- Teksty w UI po polsku, krótko, z perspektywy użytkownika.
-- Dane w localStorage pod `xmarks.v1` (stary klucz `pinezki.v1` jest migrowany przy wczytaniu). Zmiana formatu = migracja przy wczytaniu, nigdy utrata danych.
-- Nowa logika bez DOM (parsowanie, liczenie, formaty) idzie do osobnego pliku `.js` z testem w `tests/`.
-- Apka ma działać jednym kciukiem w aucie: duże przyciski, zapis jednym stuknięciem, bez potwierdzeń przy zapisie.
-- Nie usuwaj plików i nie wychodź poza folder projektu.
+- Do końca Fazy 0: źródła to `_fragment.html` + `olc.js`, `index.html` i `_artifact.html` są generowane przez `npm run build` (nie edytuj ich).
+- Od Fazy 0: struktura z ROADMAP.md sekcja 4 (Vite + TS strict + Preact + Dexie). Po migracji zaktualizuj TEN plik (sekcja Kod), żeby opisywał nową strukturę.
+- Wszystkie kolory, fonty i odstępy przez tokeny CSS. Każdy ekran: jasny + ciemny motyw, 375 px, `prefers-reduced-motion`.
+- Wygląd i ton: ROADMAP.md sekcja 2 (nowoczesna mapa skarbów, nie kostium pirata). Teksty UI po polsku, krótko.
+- Logika bez DOM (geo, parsowanie, pogoda, werdykty, odznaki) w osobnych modułach z testami jednostkowymi.
+- Zewnętrzne usługi tylko bez klucza po stronie klienta (Nominatim, Open-Meteo, OpenFreeMap/CARTO, Overpass, NOAA). Szanuj limity (Nominatim: max 1 zapytanie/s, cache).
+- Nie usuwaj plików spoza projektu, nie wychodź poza folder projektu, nie commituj sekretów (`.env` w `.gitignore`).
