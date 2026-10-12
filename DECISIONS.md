@@ -1,5 +1,6 @@
 # Decyzje agenta
 
+- Znacznik CTR Wrocław to uproszczony okrąg 12 km wokół punktu odniesienia lotniska EPWR z mapy AIP, trzymany w lokalnym GeoJSON; przycisk otwiera DroneMap PAŻP na tych współrzędnych, bo żywe strefy geograficzne są tylko tam.
 - Złota godzina na karcie to wieczorna, od słońca na 6° do zachodu, liczona lokalnie tym samym wzorem co okno lotów i bez sieci.
 - Dobre okno to godzina z werdyktem Lecisz w najbliższych 48 h; wschód, zachód, złota i niebieska godzina są liczone lokalnie wzorami SunCalc, a Open-Meteo jest proszone o 3 doby, żeby wieczorem zostało dość godzin.
 - Werdykt to Odpuść, gdy porywy albo wiatr osiągają limit (domyślnie 10 m/s, klasa C0), opad jest od 0,5 mm, temperatura spada poniżej 0 °C albo Kp jest co najmniej 5; Ryzyko zaczyna się od 70% limitu, słabszego opadu i Kp od 4, a brak Kp nie obniża werdyktu i limit jedzie w kopii JSON.

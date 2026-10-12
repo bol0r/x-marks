@@ -804,6 +804,21 @@ main {
   border-radius: var(--r-pill);
   padding: 0 var(--s-4);
 }
+.zone-flag {
+  display: inline-block;
+  margin: var(--s-3) var(--s-3) 0 0;
+  font: 700 11px var(--body);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--danger);
+  border: 1px dashed var(--danger);
+  border-radius: var(--r-pill);
+  padding: 0 var(--s-4);
+}
+.mx.in-zone {
+  outline: 2px dashed var(--danger);
+  outline-offset: 2px;
+}
 .me {
   width: var(--s-9);
   height: var(--s-9);
