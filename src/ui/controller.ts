@@ -26,6 +26,7 @@ import {
   places,
   ready,
   sheet,
+  showRadar,
   showSplash,
   sortNear,
   swipedOnce,
@@ -116,6 +117,14 @@ export function openData() {
 
 export function closeSheet() {
   sheet.value = null;
+}
+
+export function openRadar() {
+  showRadar.value = true;
+}
+
+export function closeRadar() {
+  showRadar.value = false;
 }
 
 function showStamp(cat: Cat) {

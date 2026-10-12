@@ -112,7 +112,7 @@ public/        icons, manifest
   Samouczek nigdy nie blokuje zapisu: stuknięcie w pieczątkę podczas samouczka zapisuje miejsce i zamyka samouczek.
   Gotowe gdy: e2e Playwright sprawdza pierwsze uruchomienie, Pomiń, brak samouczka po przeładowaniu,
   ponowne uruchomienie z Dane i zrzuty w obu motywach.
-- [ ] **Radar.** Pełnoekranowy widok: najbliższe X w wybranej kategorii, duża odległość, strzałka kierunku (DeviceOrientation; na iOS przycisk „Włącz kompas” → `requestPermission`). Wake Lock, gdy otwarty. Gotowe gdy: strzałka wskazuje cel z dokładnością do ~15° na telefonie.
+- [x] **Radar.** Pełnoekranowy widok: najbliższe X w wybranej kategorii, duża odległość, strzałka kierunku (DeviceOrientation; na iOS przycisk „Włącz kompas” → `requestPermission`). Wake Lock, gdy otwarty. Gotowe gdy: strzałka wskazuje cel z dokładnością do ~15° na telefonie.
 - [ ] **Zapis w ruchu.** Gdy prędkość > 30 km/h: zapisz też `heading` i `speed`, oznacz miejsce jako „przybliżone”, pokaż w liście „do sprawdzenia”. Gotowe gdy: miejsce z jazdy ma znacznik i da się je „poprawić na mapie” przeciągnięciem pinezki.
 - [ ] **Popraw pozycję.** W edycji: mapa z przeciąganym X. Gotowe gdy: przeciągnięcie zmienia współrzędne i adres.
 - [ ] **Notatka głosowa.** Przycisk mikrofonu w dymku i edycji (Web Speech API `pl-PL`; gdy brak, ukryj). Gotowe gdy: mówię, tekst ląduje w notatce.

@@ -49,6 +49,7 @@ export interface CoachSession {
 }
 
 export const coach = signal<CoachSession | null>(null);
+export const showRadar = signal(false);
 
 export const shown = computed(() => {
   const f = filter.value;
