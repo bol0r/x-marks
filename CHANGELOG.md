@@ -1,5 +1,6 @@
 # Zmiany
 
+- Faza 1 — offline mapa okolicy: przycisk zapisuje kafelki w promieniu 10 km, a w trybie samolotowym mapa się wyświetla.
 - Faza 1 — wyszukiwarka: „lakowa” znajduje „Łąkową” w nazwie, notatce, adresie i tagach, także offline.
 - Faza 1 — tagi i ocena: filtr „woda” i 3X zostawia tylko miejsca z tym tagiem i trzema X.
 - Faza 1 — własne kategorie: do sześciu, kolor z tokenów, a „Widok” działa w filtrze, kafelku, mapie i kopii.

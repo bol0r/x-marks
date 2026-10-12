@@ -5,6 +5,7 @@ import { catOf } from "../core/cats";
 import { dist, fmtDist } from "../core/geo";
 import { esc, navUrl, titleOf } from "../core/format";
 import type { Fix, Place } from "../core/types";
+import { cachedWorkerUrl, installMapProtocol, offlineStyleFor } from "../data/mapcache";
 import { correctPlace } from "../ui/controller";
 import { catRev, filter, fixRev, inFrame, lastFix, shown, sortNear, view } from "../ui/state";
 
@@ -30,20 +31,39 @@ async function draw(el: HTMLElement, items: Place[], fix: Fix | null) {
   let ml: typeof import("maplibre-gl");
   try {
     ml = await import("maplibre-gl");
-    const worker = await import("maplibre-gl/dist/maplibre-gl-worker.mjs?url");
-    ml.setWorkerUrl(worker.default);
+    const warmed = cachedWorkerUrl();
+    if (warmed) ml.setWorkerUrl(warmed);
+    else {
+      const worker = await import("maplibre-gl/dist/maplibre-gl-worker.mjs?url");
+      ml.setWorkerUrl(worker.default);
+    }
     await import("maplibre-gl/dist/maplibre-gl.css");
   } catch {
     note.value = "Mapa niedostępna offline. Lista działa normalnie.";
     return;
   }
   if (my !== drawGen) return;
+  const root = document.documentElement;
+  const dark = root.dataset.theme === "dark" || (root.dataset.theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
+  const offline = typeof navigator !== "undefined" && navigator.onLine === false;
+  let style: string | object = dark ? NIGHT : DAY;
+  let fromCache = false;
+  if (offline) {
+    const cached = await offlineStyleFor(dark);
+    if (my !== drawGen) return;
+    if (!cached) {
+      note.value = "Brak zapisanej mapy okolicy.";
+      return;
+    }
+    style = cached;
+    fromCache = true;
+    note.value = "";
+  }
+  installMapProtocol(ml);
   if (!map) {
-    const root = document.documentElement;
-    const dark = root.dataset.theme === "dark" || (root.dataset.theme !== "light" && matchMedia("(prefers-color-scheme: dark)").matches);
     map = new ml.Map({
       container: el,
-      style: dark ? NIGHT : DAY,
+      style: style as ConstructorParameters<typeof ml.Map>[0]["style"],
       center: [17.038, 51.107],
       zoom: 12,
       attributionControl: {},
@@ -51,6 +71,13 @@ async function draw(el: HTMLElement, items: Place[], fix: Fix | null) {
       pitchWithRotate: false,
       touchPitch: false,
     });
+    if (fromCache) {
+      const mark = () => {
+        el.dataset.map = "cached";
+      };
+      if (map.isStyleLoaded()) mark();
+      else map.once("load", mark);
+    }
     const failNote = inFrame
       ? "W podglądzie podkład mapy się nie wczytuje. Na bol0r.github.io/x-marks działa."
       : "Podkład mapy się nie wczytał (brak internetu).";
@@ -132,7 +159,7 @@ async function draw(el: HTMLElement, items: Place[], fix: Fix | null) {
     if (items.length) {
       const b = new ml.LngLatBounds();
       for (const p of items) b.extend([p.lng, p.lat]);
-      current.fitBounds(b, { padding: 30, maxZoom: 15 });
+      current.fitBounds(b, { padding: 30, maxZoom: fromCache ? 14 : 15 });
     } else current.jumpTo({ center: fix ? [fix.lng, fix.lat] : [17.038, 51.107], zoom: 12 });
   }, 50);
 }

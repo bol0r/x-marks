@@ -3,6 +3,7 @@ import { readCatBook, writeCatBook } from "../data/cats";
 import { motionFromFix } from "../core/motion";
 import { joinNote } from "../core/speech";
 import { cleanStars, cleanTags } from "../core/tags";
+import { cacheNeighborhood, storedMapBytes } from "../data/mapcache";
 import { COACH_STEPS, COACH_VERSION, stepsFor } from "../core/coach";
 import { readCoach, writeCoachVersion } from "../data/coach";
 import { fmtWhen } from "../core/geo";
@@ -27,6 +28,7 @@ import {
   inFrame,
   lastBackup,
   lastFix,
+  mapBytes,
   padHint,
   places,
   query,
@@ -124,6 +126,31 @@ export function setStarFilter(n: number) {
 
 export function setQuery(v: string) {
   query.value = v;
+}
+
+export async function refreshMapUsage() {
+  try {
+    mapBytes.value = await storedMapBytes();
+  } catch {
+    mapBytes.value = 0;
+  }
+}
+
+export async function saveOfflineMap(setMsg: (s: string) => void) {
+  const points = places.value.map((p) => ({ lat: p.lat, lng: p.lng }));
+  if (!points.length) {
+    setMsg("Najpierw zapisz miejsce.");
+    return;
+  }
+  setMsg("Zapisuję mapę okolicy…");
+  try {
+    await cacheNeighborhood(points, (n) => {
+      mapBytes.value = n;
+    });
+    setMsg("Kafelki zapisane na tym telefonie.");
+  } catch {
+    setMsg("Nie udało się zapisać mapy. Sprawdź internet.");
+  }
 }
 
 export function setViewMode(v: typeof view.value) {
@@ -712,6 +739,7 @@ export async function boot() {
   }
   ready.value = true;
   openGate();
+  void refreshMapUsage();
   if (!pendingHash && !sharedText) {
     try {
       const record = await readCoach();

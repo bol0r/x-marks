@@ -57,6 +57,7 @@ export const catRev = signal(0);
 export const tagFilter = signal("");
 export const starFilter = signal(0);
 export const query = signal("");
+export const mapBytes = signal(0);
 
 export const shown = computed(() => {
   const f = filter.value;
