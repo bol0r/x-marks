@@ -1,5 +1,6 @@
 # Decyzje agenta
 
+- Radar liczy azymut na telefonie i obraca strzałkę o różnicę azymutu oraz kompasu; na iOS kompas rusza dopiero po „Włącz kompas”, a Wake Lock trzyma ekran tylko gdy radar jest otwarty.
 - Samouczek zapisuje w Dexie (`meta`, klucz `coach`, `{version}`) ostatnią obejrzaną wersję kroków, a gdy IndexedDB padnie — w localStorage, żeby po przeładowaniu nie wracał.
 - Jakość: ESLint i Prettier w `npm run lint`, `tsc --noEmit` w CI, a service worker rejestruje się też na localhost, bo Lighthouse PWA na podglądzie dostał 100, a paczka startowa ma 58 KB gzip.
 - ZABLOKOWANE: workflow `.github/workflows/ci.yml` wdraża `dist` na Pages tylko po zielonych testach, ale Pages nadal serwuje gałąź `main` (katalog `/`), a nie GitHub Actions — w ustawieniach repozytorium: Settings → Pages → Build and deployment → Source: GitHub Actions; bez tego merge na `main` podmieniłby działającą stronę na surowy `index.html` Vite.

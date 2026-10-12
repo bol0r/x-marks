@@ -1,4 +1,5 @@
 import { Coach } from "../components/Coach";
+import { Radar } from "../components/Radar";
 import { Header, Hints } from "../components/Header";
 import { Pads } from "../components/Pads";
 import { PlaceList } from "../components/List";
@@ -31,6 +32,7 @@ export function Home() {
       {s?.kind === "paste" ? <PasteSheet cat={s.cat} prefill={s.prefill} /> : null}
       {s?.kind === "data" ? <DataSheet /> : null}
       <Coach />
+      <Radar />
     </>
   );
 }

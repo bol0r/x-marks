@@ -1,6 +1,6 @@
 import { CATS } from "../../core/cats";
 import type { Cat, Filter } from "../../core/types";
-import { setFilter, setViewMode, toggleSort, openPaste, openData } from "../controller";
+import { setFilter, setViewMode, toggleSort, openPaste, openData, openRadar } from "../controller";
 import { coach, counts, filter, lastFix, places, sortNear, view } from "../state";
 
 const FILTERS: { id: Filter; label: string; cat?: Cat }[] = [
@@ -65,6 +65,9 @@ export function Toolbar() {
           onClick={toggleSort}
         >
           Najbliżej
+        </button>
+        <button type="button" class="ghost" id="radarBtn" onClick={openRadar}>
+          Radar
         </button>
         <button type="button" class="ghost" id="pasteBtn" data-coach="paste" onClick={() => openPaste()}>
           Dodaj
