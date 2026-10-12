@@ -17,8 +17,11 @@ alwaysApply: true
 3. Dane użytkownika nie giną: każda zmiana formatu ma migrację i test migracji. Eksport zawsze pełny.
 
 # Kod
-- Do końca Fazy 0: źródła to `_fragment.html` + `olc.js`, `index.html` i `_artifact.html` są generowane przez `npm run build` (nie edytuj ich).
-- Od Fazy 0: struktura z ROADMAP.md sekcja 4 (Vite + TS strict + Preact + Dexie). Po migracji zaktualizuj TEN plik (sekcja Kod), żeby opisywał nową strukturę.
+- Vite + TypeScript (strict) + Preact. Wejście: `index.html`, źródła w `src/`. Skrypty: `npm run dev`, `npm run build`, `npm test` (Vitest), `npm run e2e` (od testów Playwright).
+- Dane miejsc: Dexie `xmarks-db` (`src/data/db.ts`, `store.ts`). Stary `localStorage` (`xmarks.v1` / `pinezki.v1`) i IndexedDB `xmarks/photos` służą tylko do jednorazowej migracji i awaryjnego zapisu, gdy IndexedDB nie działa.
+- Logika bez DOM w `src/core/`. Testy jednostkowe w `tests/unit/`.
+- Wygląd: `src/styles/tokens.css` i `src/styles/base.css`. Mapa: `src/map/MapView.tsx` (MapLibre + OpenFreeMap, leniwie).
+- Nie edytuj `dist/`. Nie commituj sekretów (`.env` w `.gitignore`).
 - Wszystkie kolory, fonty i odstępy przez tokeny CSS. Każdy ekran: jasny + ciemny motyw, 375 px, `prefers-reduced-motion`.
 - Wygląd i ton: ROADMAP.md sekcja 2 (nowoczesna mapa skarbów, nie kostium pirata). Teksty UI po polsku, krótko.
 - Logika bez DOM (geo, parsowanie, pogoda, werdykty, odznaki) w osobnych modułach z testami jednostkowymi.

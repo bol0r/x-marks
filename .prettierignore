@@ -1,0 +1,10 @@
+dist
+node_modules
+test-results
+playwright-report
+public
+package-lock.json
+CHANGELOG.md
+ROADMAP.md
+DECISIONS.md
+README.md
