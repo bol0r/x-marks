@@ -128,7 +128,7 @@ public/        icons, manifest
 - [x] **Okno lotów.** Najlepsze godziny w ciągu 48 h dla każdego miejsca Dron, z wschodem/zachodem, złotą i niebieską godziną (SunCalc). Gotowe gdy: widok „Kiedy lecieć” sortuje miejsca po najbliższym dobrym oknie.
 - [x] **Złota godzina wszędzie.** Na każdej karcie: dzisiejszy zachód i złota godzina dla tego miejsca. Gotowe gdy: liczone offline.
 - [x] **Strefy.** Przycisk „Sprawdź strefę” otwiera mapę PAŻP (DroneMap) dla współrzędnych miejsca; jeśli da się, pokaż ostrzeżenie dla znanych stref (CTR Wrocław) z lokalnego GeoJSON. Gotowe gdy: miejsce w CTR dostaje widoczny znacznik.
-- [ ] **Checklista przedlotowa.** Edytowalna lista (baterie, karta, śmigła, strefa, zgoda właściciela terenu). Gotowe gdy: odhaczanie przed lotem, reset po locie.
+- [x] **Checklista przedlotowa.** Edytowalna lista (baterie, karta, śmigła, strefa, zgoda właściciela terenu). Gotowe gdy: odhaczanie przed lotem, reset po locie.
 - [ ] **Dziennik lotów.** Przy miejscu: lot (data, czas, bateria, notatka, zdjęcia/klipy). Statystyki: liczba lotów, łączny czas, ulubione miejsce. Gotowe gdy: eksport CSV dziennika.
 - [ ] **Profil drona.** Model, masa, klasa, limit wiatru, numer operatora (lokalnie). Gotowe gdy: werdykt korzysta z profilu.
 
