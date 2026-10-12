@@ -1,0 +1,102 @@
+/* Kolory, fonty, promienie, cienie i odstępy. Jedno źródło wyglądu. */
+:root {
+  --bg: #efe6d2;
+  --paper: #f8f2e4;
+  --line: #d8caa9;
+  --fg: #1d2935;
+  --muted: #6c6352;
+  --ink-soft: rgba(29, 41, 53, 0.18);
+  --dron: #2a66a8;
+  --chill: #2b8565;
+  --cozy: #b5680e;
+  --danger: #b8321f;
+  --ok: #2b8565;
+  --mark: #cf3a22;
+  --on-cat: #fffaf0;
+  --contour: rgba(110, 80, 30, 0.1);
+  --shadow: rgba(80, 55, 15, 0.28);
+  --shade: #000;
+  --paper-shine: rgba(255, 255, 255, 0.4);
+  --veil: rgba(8, 12, 16, 0.45);
+  --on-photo: #fff;
+  --on-photo-soft: rgba(255, 255, 255, 0.85);
+  --scrim-clear: rgba(10, 14, 20, 0);
+  --scrim: rgba(10, 14, 20, 0.82);
+  --display: "Fraunces", Georgia, "Times New Roman", serif;
+  --body: "Bricolage Grotesque", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .25 0 0 0 0 .1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --r-xs: 5px;
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-control: 9px;
+  --r-lg: 10px;
+  --r-xl: 11px;
+  --r-card: 14px;
+  --r-tile: 16px;
+  --r-pad: 18px;
+  --r-sheet: 22px;
+  --r-pill: 999px;
+  --shadow-card: 0 1px 0 var(--paper-shine) inset, 0 10px 24px -18px var(--shadow);
+  --shadow-tile: 0 0 0 1px var(--line), 0 14px 26px -18px var(--shadow);
+  --shadow-map: 0 14px 26px -20px var(--shadow);
+  --shadow-toast: 0 18px 40px -16px var(--shadow);
+  --shadow-stamp: drop-shadow(0 6px 14px var(--shadow));
+  --s-1: 2px;
+  --s-2: 3px;
+  --s-3: 4px;
+  --s-4: 6px;
+  --s-5: 8px;
+  --s-6: 10px;
+  --s-7: 12px;
+  --s-8: 14px;
+  --s-9: 16px;
+  --s-10: 18px;
+  --s-hit: 11px;
+  --s-11: 22px;
+  --s-12: 24px;
+  --page: 16px;
+  --app-max: 640px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1820;
+    --paper: #132430;
+    --line: #26404f;
+    --fg: #efe4cc;
+    --muted: #93a4ad;
+    --ink-soft: rgba(239, 228, 204, 0.16);
+    --dron: #6cb6ff;
+    --chill: #52d3a6;
+    --cozy: #ffb454;
+    --danger: #ff6b5b;
+    --ok: #52d3a6;
+    --mark: #ff5a3c;
+    --on-cat: #0d1820;
+    --contour: rgba(140, 200, 220, 0.075);
+    --shadow: rgba(0, 0, 0, 0.5);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0d1820;
+  --paper: #132430;
+  --line: #26404f;
+  --fg: #efe4cc;
+  --muted: #93a4ad;
+  --ink-soft: rgba(239, 228, 204, 0.16);
+  --dron: #6cb6ff;
+  --chill: #52d3a6;
+  --cozy: #ffb454;
+  --danger: #ff6b5b;
+  --ok: #52d3a6;
+  --mark: #ff5a3c;
+  --on-cat: #0d1820;
+  --contour: rgba(140, 200, 220, 0.075);
+  --shadow: rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
+}

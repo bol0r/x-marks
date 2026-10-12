@@ -11,9 +11,9 @@ Później wracasz do nich z listy, albumu albo mapy skarbów.
 
 ## Uruchomienie lokalnie
 ```bash
-npm test          # testy
-npm run build     # składa index.html z _fragment.html + olc.js
+npm test          # testy jednostkowe (Vitest)
 npm run dev       # http://localhost:5173
+npm run build     # tsc + Vite, wynik w dist/
 ```
 
 ## Praca w Cursorze

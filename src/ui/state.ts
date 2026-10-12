@@ -1,0 +1,72 @@
+import { computed, signal } from "@preact/signals";
+import type { Cat, Filter, Fix, Place, View } from "../core/types";
+import { dist } from "../core/geo";
+import { loadBackupStamp, loadPlacesSync, loadSwiped, loadView } from "../data/legacy";
+
+const hasStore = typeof localStorage !== "undefined";
+export const places = signal<Place[]>(hasStore ? loadPlacesSync() : []);
+export const ready = signal(hasStore);
+export const filter = signal<Filter>("all");
+export const view = signal<View>(typeof localStorage === "undefined" ? "list" : loadView());
+export const sortNear = signal(false);
+export const lastFix = signal<Fix | null>(null);
+export const gpsOk = signal<boolean | null>(null);
+export const gpsState = signal<"" | "ok" | "warn" | "bad">("");
+export const gpsText = signal("GPS: szukam");
+export const gpsHint = signal("");
+export const padHint = signal("");
+export const showSplash = signal(true);
+export const swipedOnce = signal(typeof localStorage === "undefined" ? false : loadSwiped());
+export const lastBackup = signal<{ ts: number; n: number } | null>(typeof localStorage === "undefined" ? null : loadBackupStamp());
+export const fixRev = signal(0);
+export const photoRev = signal(0);
+export const busyCat = signal<Cat | null>(null);
+
+export interface ToastAction {
+  label: string;
+  fn: () => void;
+}
+
+export interface ToastModel {
+  title: string;
+  sub: string;
+  actions: ToastAction[];
+  ms: number;
+  onExpire: (() => void) | null;
+}
+
+export const toast = signal<ToastModel | null>(null);
+
+export type SheetModel =
+  | { kind: "edit"; id: string }
+  | { kind: "paste"; cat: Cat | null; prefill: string }
+  | { kind: "data" };
+
+export const sheet = signal<SheetModel | null>(null);
+
+export const shown = computed(() => {
+  const f = filter.value;
+  let arr = f === "arch" ? places.value.filter((p) => p.archived) : places.value.filter((p) => !p.archived && (f === "all" || p.cat === f));
+  const fix = lastFix.value;
+  if (sortNear.value && fix) arr = arr.slice().sort((a, b) => dist(fix, a) - dist(fix, b));
+  return arr;
+});
+
+export const counts = computed(() => {
+  const active = places.value.filter((p) => !p.archived);
+  const c = { all: active.length, dron: 0, chill: 0, cozy: 0, arch: places.value.length - active.length };
+  for (const p of active) c[p.cat] += 1;
+  return c;
+});
+
+export const inFrame = (() => {
+  try {
+    return window.self !== window.top;
+  } catch {
+    return true;
+  }
+})();
+
+export function uid(): string {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
