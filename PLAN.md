@@ -20,6 +20,10 @@ Osobista apka (dawniej Pinezki) do szybkiego oznaczania ciekawych miejsc: jestem
 - `olc.js` — Plus Codes + parser, testowalny w Node; `build.py` skleja `_fragment.html` + `olc.js` w `index.html`
 - Dane: `localStorage` (`xmarks.v1`), eksport JSON / GPX, import JSON
 - PWA: `manifest.webmanifest`, `sw.js` (działa offline), ikona
+- v0.3: widoki Lista / Kafelki / Mapa; zdjęcie okładki (IndexedDB `xmarks`/`photos`, zmniejszane do 1400 px JPEG); nazwa miejsca; edycja w arkuszu
+- v0.3: przesunięcie na liście: w lewo = archiwum, w prawo = usuń, z cofaniem (toast 6–8 s); filtr Archiwum
+- v0.3: Dodaj: „Udostępnij” z Map Google (nazwa + adres + maps.app.goo.gl) i sama nazwa miejsca → wyszukiwanie w OpenStreetMap (Nominatim)
+- v0.3: share_target (Android: Udostępnij → X Marks), kopia zapasowa v2 ze zdjęciami (base64)
 
 Model rekordu:
 ```json
@@ -34,6 +38,15 @@ Na iPhonie: Safari → Udostępnij → „Do ekranu początkowego”. Pierwsze s
 - Kopia zapasowa: Dane → Zapisz kopię (menu udostępniania → Pliki/iCloud/Dysk Google), przypomnienie po 7 dniach
 
 Lokalnie na Macu: `npx serve .` (localhost liczy się jako bezpieczny kontekst).
+
+## Pomysły na „wow” (do decyzji)
+- [ ] Radar: tryb jazdy z najbliższym zapisanym miejscem, odległością i strzałką kierunku
+- [ ] Pogoda dronowa przy pinezce Dron: wiatr na 10/80/120 m, porywy, opady (Open-Meteo, bez klucza) → „lot OK / odpuść”
+- [ ] Strefy lotów: link do mapy PAŻP dla punktu
+- [ ] Udostępnij miejsce linkiem `…/x-marks/?add=lat,lng,cat,nazwa` → u kolegi „Dodaj do moich”
+- [ ] Złota godzina: godzina wschodu/zachodu słońca dla miejsca (SunCalc)
+- [ ] Ulubione / ocena 1–3 X
+- [ ] Ciemny podkład mapy + klastry
 
 ## Etap 1 — wygoda w aucie
 - [ ] Zapis bez patrzenia: duży przycisk + wibracja + dźwięk potwierdzenia

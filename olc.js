@@ -68,9 +68,42 @@ function findCity(text){
 
 const okLatLng = (lat, lng) => isFinite(lat) && isFinite(lng) && Math.abs(lat) <= 90 && Math.abs(lng) <= 180 && !(lat === 0 && lng === 0);
 
-// Zwraca {lat,lng,src,info?} albo {error}
+// Nazwa / adres miejsca z wklejonego tekstu (udostępnienie z Map Google: „Nazwa\nAdres\nhttps://maps.app.goo.gl/…”)
+const JUNK = /^(dropped pin|upuszczona pinezka|pinezka|pin\b|oznaczone miejsce|marked location|my location|moja lokalizacja|lokalizacja|location|zobacz w mapach google|see on google maps|google maps|mapy google)[:\s-]*/i;
+function placeQuery(raw){
+  const lines = String(raw || "").split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const parts = [];
+  const add = t => {
+    t = String(t).replace(/\+/g, " ").replace(/\s+/g, " ").replace(JUNK, "").replace(/^[\s,·–-]+|[\s,·–-]+$/g, "").trim();
+    if(t && /\p{L}{3,}/u.test(t) && !parts.includes(t)) parts.push(t);
+  };
+  for(const l of lines){
+    for(const u of l.match(/https?:\/\/\S+/g) || []){
+      let d = u; try{ d = decodeURIComponent(u.replace(/\+/g, " ")); }catch(e){}
+      const pl = d.match(/\/maps\/place\/([^/@?]+)/); if(pl) add(pl[1]);
+      const q = d.match(/[?&](?:q|query|address|name)=([^&]+)/); if(q && !/^\s*-?\d+(\.\d+)?\s*,/.test(q[1])) add(q[1]);
+    }
+    add(l.replace(/https?:\/\/\S+/g, " "));
+  }
+  return parts.length ? {name:parts[0], parts} : null;
+}
+
+// Zwraca {lat,lng,src,info?,name?} albo {error, query?}
+// query = {name, parts[]} — tekst do wyszukania (geokodowania), gdy nie ma współrzędnych
 // ref: {lat,lng,label} — punkt odniesienia dla krótkiego Plus Code bez miasta
 function parsePlace(raw, ref){
+  const r = parseCoords(raw, ref);
+  if(r.lat != null){
+    if(/link/.test(r.src)){ const q = placeQuery(raw); if(q) r.name = q.name; }
+    return r;
+  }
+  if(r.error === "") return r;
+  const q = placeQuery(raw);
+  if(q) r.query = q;
+  return r;
+}
+
+function parseCoords(raw, ref){
   let s = (raw || "").trim();
   if(!s) return {error:""};
   try{ s = decodeURIComponent(s.replace(/\+/g, "%2B")); }catch(e){}
@@ -114,9 +147,9 @@ function parsePlace(raw, ref){
   if(m){ const lat = +(m[1] + "." + m[2]), lng = +(m[3] + "." + m[4]); if(okLatLng(lat, lng)) return {lat, lng, src:"współrzędne"}; }
 
   if(/(maps\.app\.goo\.gl|goo\.gl\/maps|g\.co\/kgs|maps\.google\.[a-z.]+\/\?cid|share\.google)/i.test(s))
-    return {error:"Skrócony link z „Udostępnij” nie zawiera pozycji. W Mapach Google przytrzymaj palec na miejscu i skopiuj współrzędne albo Plus Code (np. 4HX8+QX Wrocław)."};
+    return {error:"Skrócony link sam w sobie nie zawiera pozycji. Wklej całość z nazwą miejsca, wpisz nazwę albo skopiuj współrzędne z karty miejsca (przytrzymaj palec na mapie)."};
   if(/https?:\/\//i.test(s)) return {error:"W tym linku nie ma współrzędnych. Skopiuj współrzędne albo Plus Code z karty miejsca."};
-  return {error:"Nie rozpoznaję. Działa: link z Map Google, Plus Code, współrzędne."};
+  return {error:"Nie rozpoznaję. Działa: link z Map, Plus Code, współrzędne albo nazwa miejsca."};
 }
 
-if(typeof module !== "undefined") module.exports = {olcEncode, olcDecode, olcRecover, parsePlace, findCity};
+if(typeof module !== "undefined") module.exports = {olcEncode, olcDecode, olcRecover, parsePlace, placeQuery, findCity};

@@ -49,3 +49,42 @@ test("parsePlace: skrócony link daje czytelny błąd", () => {
 test("parsePlace: krótki Plus Code bez miasta i bez odniesienia prosi o miasto", () => {
   assert.match(parsePlace("425J+XR", null).error, /miasta/);
 });
+
+test("udostępnienie z Map Google: nazwa + adres + skrócony link → wyszukiwanie", () => {
+  const r = parsePlace("Hala Stulecia\nWystawowa 1, 51-618 Wrocław\nhttps://maps.app.goo.gl/AbC123", null);
+  assert.equal(r.lat, undefined);
+  assert.equal(r.query.name, "Hala Stulecia");
+  assert.deepEqual(r.query.parts, ["Hala Stulecia", "Wystawowa 1, 51-618 Wrocław"]);
+});
+
+test("nazwa i link w jednej linii", () => {
+  const r = parsePlace("Hala Stulecia https://maps.app.goo.gl/AbC123", null);
+  assert.equal(r.query.name, "Hala Stulecia");
+});
+
+test("link /maps/place/Nazwa bez współrzędnych → wyszukiwanie po nazwie", () => {
+  const r = parsePlace("https://www.google.com/maps/place/Hala+Stulecia/data=!4m2!3m1!1s0x0", null);
+  assert.equal(r.query.name, "Hala Stulecia");
+});
+
+test("link /maps/place/Nazwa/@lat,lng → współrzędne i nazwa", () => {
+  const r = parsePlace("https://www.google.com/maps/place/Hala+Stulecia/@51.1069,17.0772,17z", null);
+  assert.ok(near(r.lat, 51.1069) && near(r.lng, 17.0772));
+  assert.equal(r.name, "Hala Stulecia");
+});
+
+test("upuszczona pinezka bez nazwy → czytelny błąd, bez wyszukiwania", () => {
+  const r = parsePlace("Dropped pin\nhttps://maps.app.goo.gl/xyz", null);
+  assert.equal(r.query, undefined);
+  assert.match(r.error, /Skrócony link/);
+});
+
+test("sama nazwa miejsca → wyszukiwanie", () => {
+  const r = parsePlace("Wzgórze Partyzantów Wrocław", null);
+  assert.equal(r.query.name, "Wzgórze Partyzantów Wrocław");
+});
+
+test("Plus Code nie staje się nazwą", () => {
+  const r = parsePlace("425J+XR Wrocław", null);
+  assert.equal(r.name, undefined);
+});
