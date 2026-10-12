@@ -7,6 +7,7 @@ import type { Cat, Place } from "../../core/types";
 import { archive, closeSheet, copyText, removePlace, saveEdit } from "../controller";
 import { lastFix, places } from "../state";
 import { photoURL, pickFile } from "../photos";
+import { PickMap } from "../../map/PickMap";
 import { CatIcon } from "./Icons";
 import { CatSeg } from "./CatSeg";
 import { Sheet } from "./Sheet";
@@ -104,7 +105,8 @@ function EditForm({ place }: { place: Place }) {
         onInput={(e) => setNote((e.target as HTMLTextAreaElement).value)}
       />
       <CatSeg id="editCat" value={cat} onPick={setCat} />
-      <div class="meta-line">
+      <PickMap placeId={place.id} lat={place.lat} lng={place.lng} cat={place.cat} />
+      <div class="meta-line" id="editMeta">
         {place.addr ? (
           <>
             {place.addr}
