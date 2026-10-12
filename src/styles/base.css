@@ -401,6 +401,26 @@ main {
   color: var(--muted);
   font-size: 11px;
 }
+.win {
+  display: grid;
+  gap: var(--s-1);
+  padding: var(--s-5) 0;
+  border-top: 1px dashed var(--line);
+}
+.win b {
+  font-family: var(--display);
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+.win-when {
+  color: var(--fg);
+  font: 600 14px var(--body);
+}
+.win-sun {
+  color: var(--muted);
+  font: 12px var(--body);
+  overflow-wrap: anywhere;
+}
 .verdict {
   display: grid;
   gap: var(--s-1);

@@ -7,6 +7,7 @@ import { Splash } from "../components/Splash";
 import { Toast } from "../components/Toast";
 import { Toolbar } from "../components/Toolbar";
 import { DataSheet } from "../components/DataSheet";
+import { WindowsSheet } from "../components/Windows";
 import { EditSheet } from "../components/EditSheet";
 import { PasteSheet } from "../components/PasteSheet";
 import { MapView } from "../../map/MapView";
@@ -31,6 +32,7 @@ export function Home() {
       {s?.kind === "edit" ? <EditSheet id={s.id} /> : null}
       {s?.kind === "paste" ? <PasteSheet cat={s.cat} prefill={s.prefill} /> : null}
       {s?.kind === "data" ? <DataSheet /> : null}
+      {s?.kind === "windows" ? <WindowsSheet /> : null}
       <Coach />
       <Radar />
     </>

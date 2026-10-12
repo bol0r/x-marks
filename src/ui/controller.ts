@@ -177,6 +177,10 @@ export function openData() {
   sheet.value = { kind: "data" };
 }
 
+export function openWindows() {
+  sheet.value = { kind: "windows" };
+}
+
 export function closeSheet() {
   sheet.value = null;
 }
