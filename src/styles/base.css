@@ -401,6 +401,37 @@ main {
   color: var(--muted);
   font-size: 11px;
 }
+.verdict {
+  display: grid;
+  gap: var(--s-1);
+  margin: 0 0 var(--s-4);
+}
+.verdict b {
+  font: 700 15px var(--display);
+}
+.verdict[data-verdict="go"] b {
+  color: var(--ok);
+}
+.verdict[data-verdict="risk"] b {
+  color: var(--cozy);
+}
+.verdict[data-verdict="stop"] b {
+  color: var(--danger);
+}
+.verdict[data-verdict="missing"] b {
+  color: var(--muted);
+}
+.verdict span {
+  color: var(--muted);
+  font: 13px var(--body);
+}
+.field {
+  display: grid;
+  gap: var(--s-2);
+  margin-top: var(--s-5);
+  color: var(--muted);
+  font: 12px var(--body);
+}
 .acts {
   display: flex;
   gap: var(--s-4);
@@ -1078,7 +1109,8 @@ textarea {
   resize: vertical;
 }
 textarea,
-input[type="text"] {
+input[type="text"],
+input[type="number"] {
   width: 100%;
   box-sizing: border-box;
   background: var(--bg);
@@ -1089,7 +1121,8 @@ input[type="text"] {
   font: var(--s-9) var(--body);
 }
 textarea:focus,
-input[type="text"]:focus {
+input[type="text"]:focus,
+input[type="number"]:focus {
   outline: none;
   border-color: var(--fg);
 }

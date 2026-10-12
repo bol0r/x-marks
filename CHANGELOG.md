@@ -1,5 +1,6 @@
 # Zmiany
 
+- Faza 2 — werdykt lotu: karta Dron mówi Lecisz, Ryzyko albo Odpuść i podaje przyczynę, np. porywy 13 m/s na 80 m.
 - Faza 2 — pogoda dronowa: karta Dron pokazuje wiatr i porywy na 10, 80 i 120 m, teraz i za 6 h, z cache na 30 min.
 - Faza 1 — offline mapa okolicy: przycisk zapisuje kafelki w promieniu 10 km, a w trybie samolotowym mapa się wyświetla.
 - Faza 1 — wyszukiwarka: „lakowa” znajduje „Łąkową” w nazwie, notatce, adresie i tagach, także offline.

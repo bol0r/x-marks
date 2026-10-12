@@ -1,9 +1,22 @@
 import { Fragment } from "preact";
 import { useEffect, useState } from "preact/hooks";
+import { judgeFlight } from "../../core/verdict";
 import { fmtClouds, fmtPrecip, fmtTemp, fmtVis, fmtWind, pairAt, type WxPair } from "../../core/weather";
+import { loadKp } from "../../data/kp";
 import { loadWeather } from "../../data/weather";
+import { droneSetup } from "../state";
 
 type WxView = { status: "loading" } | { status: "missing"; offline: boolean } | { status: "fresh" | "stale"; pair: WxPair };
+
+function VerdictLine({ hour, kp }: { hour: WxPair["now"]; kp: number | null }) {
+  const result = judgeFlight(hour, droneSetup.value, kp);
+  return (
+    <p class="verdict" data-verdict={result.level} data-reason={result.reason}>
+      <b>{result.label}</b>
+      <span>{result.reason}</span>
+    </p>
+  );
+}
 
 function Grid({ pair }: { pair: WxPair }) {
   const rows = [
@@ -33,6 +46,7 @@ function Grid({ pair }: { pair: WxPair }) {
 
 export function DroneWeather({ lat, lng }: { lat: number; lng: number }) {
   const [view, setView] = useState<WxView>({ status: "loading" });
+  const [kp, setKp] = useState<number | null>(null);
 
   useEffect(() => {
     let live = true;
@@ -52,14 +66,33 @@ export function DroneWeather({ lat, lng }: { lat: number; lng: number }) {
     };
   }, [lat, lng]);
 
+  useEffect(() => {
+    let live = true;
+    void loadKp().then((value) => {
+      if (live) setKp(value);
+    });
+    return () => {
+      live = false;
+    };
+  }, []);
+
+  const pair = view.status === "fresh" || view.status === "stale" ? view.pair : null;
+
   return (
     <section class="wx" data-wx={view.status} aria-label="Pogoda dronowa">
       <p class="wx-h">Pogoda</p>
+      {pair ? <VerdictLine hour={pair.now} kp={kp} /> : null}
       {view.status === "loading" ? <p class="wx-foot">Sprawdzam wiatr…</p> : null}
+      {view.status === "missing" ? (
+        <p class="verdict" data-verdict="missing">
+          <b>Werdykt</b>
+          <span>brak pogody</span>
+        </p>
+      ) : null}
       {view.status === "missing" ? <p class="wx-foot">{view.offline ? "Pogoda niedostępna offline" : "Pogoda niedostępna"}</p> : null}
-      {view.status === "fresh" || view.status === "stale" ? (
+      {pair ? (
         <>
-          <Grid pair={view.pair} />
+          <Grid pair={pair} />
           <p class="wx-foot">{view.status === "stale" ? "ostatni odczyt · wiatr·porywy, m/s" : "wiatr·porywy, m/s"}</p>
         </>
       ) : null}

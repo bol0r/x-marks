@@ -11,12 +11,14 @@ import { titleOf } from "../core/format";
 import { toGPX } from "../core/format";
 import { geocode, reverseGeocodeAddress } from "../core/nominatim";
 import { blobToDataURL, dataURLToBlob, planImport, serializeBackup } from "../data/backup";
+import { readSetup, writeSetup } from "../data/drone";
 import { loadBackupStamp, loadPlacesSync, markSwiped, saveBackupStamp, saveView } from "../data/legacy";
 import { delPlacePhotos, listShots, loadPlaces, putShot, replaceShots, savePlaces, setCoverBlob } from "../data/store";
 import type { Cat, Fix, Place } from "../core/types";
 import { dropPhotoURL, pickFile, shrink } from "./photos";
 import {
   busyCat,
+  droneSetup,
   catRev,
   coach,
   filter,
@@ -555,7 +557,7 @@ export async function backupJSON(): Promise<string> {
     }
     if (!gallery[p.id]?.length) delete gallery[p.id];
   }
-  return serializeBackup(places.value, photos, new Date(), gallery, catalog().custom);
+  return serializeBackup(places.value, photos, new Date(), gallery, catalog().custom, droneSetup.value);
 }
 
 export function lastBackupTxt(): string {
@@ -632,6 +634,10 @@ export async function runImport(file: File): Promise<number> {
   }
   places.value = [...places.value, ...plan.added].sort((a, b) => b.ts - a.ts);
   if (plan.categories.length) await mergeCategories(plan.categories);
+  if (plan.drone) {
+    droneSetup.value = plan.drone;
+    await writeSetup(plan.drone);
+  }
   await persist();
   return plan.added.length;
 }
@@ -731,6 +737,11 @@ export async function boot() {
     catRev.value++;
   } catch {
     /* zostają trzy wbudowane */
+  }
+  try {
+    droneSetup.value = await readSetup();
+  } catch {
+    /* zostaje limit 10 m/s */
   }
   try {
     places.value = await loadPlaces();
