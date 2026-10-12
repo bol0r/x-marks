@@ -4,6 +4,7 @@ import type { GeoJSONSource, Map as MlMap, Marker } from "maplibre-gl";
 import { catOf } from "../core/cats";
 import { dist, fmtDist } from "../core/geo";
 import { esc, navUrl, titleOf } from "../core/format";
+import { zoneLabel } from "../core/zones";
 import type { Fix, Place } from "../core/types";
 import { cachedWorkerUrl, installMapProtocol, offlineStyleFor } from "../data/mapcache";
 import { correctPlace } from "../ui/controller";
@@ -22,6 +23,11 @@ function xEl(p: Place) {
   el.className = p.approx ? "mx approx" : "mx";
   el.dataset.id = p.id;
   if (p.approx) el.dataset.approx = "1";
+  const zone = zoneLabel(p.lat, p.lng);
+  if (zone) {
+    el.dataset.zone = zone;
+    el.classList.add("in-zone");
+  }
   el.innerHTML = `<svg viewBox="0 0 30 30" style="--c:var(${catOf(p.cat).color})"><rect width="30" height="30" fill="transparent"/><path class="halo" d="M7 7L23 23M23 7L7 23"/><path class="ink" d="M7 7L23 23M23 7L7 23"/></svg>`;
   return el;
 }

@@ -2,6 +2,7 @@ import { useEffect, useRef } from "preact/hooks";
 import { catOf } from "../../core/cats";
 import { dist, fmtCoords, fmtDist, fmtWhen } from "../../core/geo";
 import { goldenLine } from "../../core/sun";
+import { droneMapUrl, zoneLabel } from "../../core/zones";
 import { navUrl, shareText, titleOf } from "../../core/format";
 import { olcEncode } from "../../core/olc";
 import type { Place } from "../../core/types";
@@ -56,6 +57,7 @@ function Card({ p, marked }: { p: Place; marked?: boolean }) {
   const stars = p.stars ?? 0;
   const tags = p.tags ?? [];
   const gold = goldenLine(Date.now(), p.lat, p.lng);
+  const zone = zoneLabel(p.lat, p.lng);
   return (
     <div class="sw" data-id={p.id} data-coach={marked ? "card" : undefined}>
       <i class="xm" style={`--c:var(${catOf(p.cat).color})`}>
@@ -80,6 +82,11 @@ function Card({ p, marked }: { p: Place; marked?: boolean }) {
           </div>
           <p class="name">{titleOf(p)}</p>
           {p.approx ? <p class="check-flag">do sprawdzenia</p> : null}
+          {zone ? (
+            <p class="zone-flag" data-zone={zone}>
+              {zone}
+            </p>
+          ) : null}
           {(distBit || addrBit) && (
             <p class="sub">
               {distBit && <b>{distBit}</b>}
@@ -117,6 +124,11 @@ function Card({ p, marked }: { p: Place; marked?: boolean }) {
             <button type="button" data-a="edit">
               Edytuj
             </button>
+            {p.cat === "dron" ? (
+              <a href={droneMapUrl(p.lat, p.lng)} target="_blank" rel="noopener" data-a="zone">
+                Sprawdź strefę
+              </a>
+            ) : null}
           </div>
         </div>
         {p.photo ? <Photo id={p.id} class="thumb" /> : null}

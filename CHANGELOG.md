@@ -1,5 +1,6 @@
 # Zmiany
 
+- Faza 2 — strefy: miejsce w CTR Wrocław dostaje znacznik, a „Sprawdź strefę” otwiera DroneMap PAŻP na współrzędnych.
 - Faza 2 — złota godzina: na każdej karcie jest dzisiejszy zachód i złota godzina, liczone offline.
 - Faza 2 — okno lotów: „Kiedy lecieć” sortuje miejsca Dron po najbliższej godzinie z werdyktem Lecisz i pokazuje wschód, zachód, złotą i niebieską godzinę.
 - Faza 2 — werdykt lotu: karta Dron mówi Lecisz, Ryzyko albo Odpuść i podaje przyczynę, np. porywy 13 m/s na 80 m.
