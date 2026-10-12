@@ -1,5 +1,6 @@
 # Decyzje agenta
 
+- Lista przedlotowa siedzi w meta Dexie (klucz checklist) i w kopii JSON; stary plik bez tego pola jej nie kasuje, a „Po locie” tylko zdejmuje ptaszki.
 - Znacznik CTR Wrocław to uproszczony okrąg 12 km wokół punktu odniesienia lotniska EPWR z mapy AIP, trzymany w lokalnym GeoJSON; przycisk otwiera DroneMap PAŻP na tych współrzędnych, bo żywe strefy geograficzne są tylko tam.
 - Złota godzina na karcie to wieczorna, od słońca na 6° do zachodu, liczona lokalnie tym samym wzorem co okno lotów i bez sieci.
 - Dobre okno to godzina z werdyktem Lecisz w najbliższych 48 h; wschód, zachód, złota i niebieska godzina są liczone lokalnie wzorami SunCalc, a Open-Meteo jest proszone o 3 doby, żeby wieczorem zostało dość godzin.

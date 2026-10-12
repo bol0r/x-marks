@@ -6,7 +6,7 @@ import { droneMapUrl, zoneLabel } from "../../core/zones";
 import { navUrl, shareText, titleOf } from "../../core/format";
 import { olcEncode } from "../../core/olc";
 import type { Place } from "../../core/types";
-import { archive, copyText, markSwipedOnce, openEdit, removePlace } from "../controller";
+import { archive, copyText, markSwipedOnce, openChecklist, openEdit, removePlace } from "../controller";
 import { catRev, coach, filter, lastFix, places, ready, showSplash, shown, swipedOnce, view } from "../state";
 import { EmptyAll, EmptyFilter } from "./Empty";
 import { CatIcon } from "./Icons";
@@ -129,6 +129,11 @@ function Card({ p, marked }: { p: Place; marked?: boolean }) {
                 Sprawdź strefę
               </a>
             ) : null}
+            {p.cat === "dron" ? (
+              <button type="button" data-a="check">
+                Przed lotem
+              </button>
+            ) : null}
           </div>
         </div>
         {p.photo ? <Photo id={p.id} class="thumb" /> : null}
@@ -185,6 +190,10 @@ export function PlaceList() {
       const p = places.value.find((x) => x.id === id);
       if (!p) return;
       const b = t.closest("button[data-a]") as HTMLButtonElement | null;
+      if (b?.dataset.a === "check") {
+        openChecklist();
+        return;
+      }
       if (b?.dataset.a === "copy") {
         const old = b.textContent;
         void copyText(shareText(p)).then((ok) => {

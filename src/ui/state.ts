@@ -1,4 +1,5 @@
 import { computed, signal } from "@preact/signals";
+import { freshChecklist, type CheckItem } from "../core/checklist";
 import type { CoachStep } from "../core/coach";
 import type { Cat, Filter, Fix, Place, View } from "../core/types";
 import { dist } from "../core/geo";
@@ -26,6 +27,7 @@ export const fixRev = signal(0);
 export const photoRev = signal(0);
 export const busyCat = signal<Cat | null>(null);
 export const droneSetup = signal({ model: "", windLimit: 10 });
+export const checklist = signal<CheckItem[]>(freshChecklist());
 
 export interface ToastAction {
   label: string;
@@ -44,7 +46,11 @@ export interface ToastModel {
 export const toast = signal<ToastModel | null>(null);
 
 export type SheetModel =
-  { kind: "edit"; id: string } | { kind: "paste"; cat: Cat | null; prefill: string } | { kind: "data" } | { kind: "windows" };
+  | { kind: "edit"; id: string }
+  | { kind: "paste"; cat: Cat | null; prefill: string }
+  | { kind: "data" }
+  | { kind: "windows" }
+  | { kind: "checks" };
 
 export const sheet = signal<SheetModel | null>(null);
 

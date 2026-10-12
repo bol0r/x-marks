@@ -819,6 +819,31 @@ main {
   outline: 2px dashed var(--danger);
   outline-offset: 2px;
 }
+.checks {
+  list-style: none;
+  margin: var(--s-5) 0 0;
+  padding: 0;
+  display: grid;
+  gap: var(--s-4);
+}
+.checks li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--s-4);
+  align-items: center;
+}
+.checks input[type="checkbox"] {
+  width: var(--s-9);
+  height: var(--s-9);
+  margin: 0;
+  accent-color: var(--dron);
+}
+.checks .check-name {
+  min-width: 0;
+}
+.checks li[data-done="1"] .check-name {
+  color: var(--muted);
+}
 .me {
   width: var(--s-9);
   height: var(--s-9);

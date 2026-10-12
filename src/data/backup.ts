@@ -1,3 +1,4 @@
+import { cleanChecklist, type CheckItem } from "../core/checklist";
 import { isBuiltin, isCat, isIcon, isPalette, type CatDef } from "../core/cats";
 import { GALLERY_MAX } from "../core/gallery";
 import { cleanStars, cleanTags } from "../core/tags";
@@ -17,6 +18,8 @@ export interface ImportPlan {
   categories: CatDef[];
   /** null, gdy plik nie ma ustawień drona — import ich nie nadpisuje. */
   drone: FlightSetup | null;
+  /** null, gdy plik nie ma checklisty — import jej nie nadpisuje. */
+  checklist: CheckItem[] | null;
 }
 
 export function serializeBackup(
@@ -26,10 +29,12 @@ export function serializeBackup(
   gallery: Record<string, string[]> = {},
   categories: CatDef[] = [],
   drone: FlightSetup | null = null,
+  checklist: CheckItem[] | null = null,
 ): string {
   const ordered = Object.keys(gallery).length > 0;
   const custom = categories.filter((c) => c.id && !isBuiltin(c.id));
   const setup = drone ? cleanSetup(drone) : null;
+  const checks = checklist ? cleanChecklist({ items: checklist }) : null;
   return JSON.stringify({
     app: "x-marks",
     v: ordered || custom.length ? 3 : 2,
@@ -39,6 +44,7 @@ export function serializeBackup(
     ...(ordered ? { gallery } : {}),
     ...(custom.length ? { categories: custom } : {}),
     ...(setup ? { drone: setup } : {}),
+    ...(checks ? { checklist: { items: checks } } : {}),
   });
 }
 
@@ -49,8 +55,10 @@ export function planImport(existing: Place[], data: unknown): ImportPlan {
     gallery?: unknown;
     categories?: unknown;
     drone?: unknown;
+    checklist?: unknown;
   };
   const drone = data && typeof data === "object" && "drone" in data ? cleanSetup(rec.drone) : null;
+  const checklist = data && typeof data === "object" && "checklist" in data ? cleanChecklist(rec.checklist) : null;
   const arr = Array.isArray(data) ? data : Array.isArray(rec.places) ? rec.places : null;
   if (!arr) throw new Error("format");
   const photos = rec.photos && typeof rec.photos === "object" ? (rec.photos as Record<string, string>) : ({} as Record<string, string>);
@@ -90,7 +98,7 @@ export function planImport(existing: Place[], data: unknown): ImportPlan {
     added.push(q);
     ids.add(p.id);
   }
-  return { added, photos: photoPlan, categories, drone };
+  return { added, photos: photoPlan, categories, drone, checklist };
 }
 
 export function dataURLToBlob(u: string): Blob {

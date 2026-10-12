@@ -6,6 +6,7 @@ import { PlaceList } from "../components/List";
 import { Splash } from "../components/Splash";
 import { Toast } from "../components/Toast";
 import { Toolbar } from "../components/Toolbar";
+import { ChecklistSheet } from "../components/Checklist";
 import { DataSheet } from "../components/DataSheet";
 import { WindowsSheet } from "../components/Windows";
 import { EditSheet } from "../components/EditSheet";
@@ -33,6 +34,7 @@ export function Home() {
       {s?.kind === "paste" ? <PasteSheet cat={s.cat} prefill={s.prefill} /> : null}
       {s?.kind === "data" ? <DataSheet /> : null}
       {s?.kind === "windows" ? <WindowsSheet /> : null}
+      {s?.kind === "checks" ? <ChecklistSheet /> : null}
       <Coach />
       <Radar />
     </>

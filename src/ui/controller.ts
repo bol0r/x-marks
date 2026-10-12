@@ -11,6 +11,7 @@ import { titleOf } from "../core/format";
 import { toGPX } from "../core/format";
 import { geocode, reverseGeocodeAddress } from "../core/nominatim";
 import { blobToDataURL, dataURLToBlob, planImport, serializeBackup } from "../data/backup";
+import { readChecklist, writeChecklist } from "../data/checklist";
 import { readSetup, writeSetup } from "../data/drone";
 import { loadBackupStamp, loadPlacesSync, markSwiped, saveBackupStamp, saveView } from "../data/legacy";
 import { delPlacePhotos, listShots, loadPlaces, putShot, replaceShots, savePlaces, setCoverBlob } from "../data/store";
@@ -18,6 +19,7 @@ import type { Cat, Fix, Place } from "../core/types";
 import { dropPhotoURL, pickFile, shrink } from "./photos";
 import {
   busyCat,
+  checklist,
   droneSetup,
   catRev,
   coach,
@@ -179,6 +181,10 @@ export function openData() {
 
 export function openWindows() {
   sheet.value = { kind: "windows" };
+}
+
+export function openChecklist() {
+  sheet.value = { kind: "checks" };
 }
 
 export function closeSheet() {
@@ -561,7 +567,7 @@ export async function backupJSON(): Promise<string> {
     }
     if (!gallery[p.id]?.length) delete gallery[p.id];
   }
-  return serializeBackup(places.value, photos, new Date(), gallery, catalog().custom, droneSetup.value);
+  return serializeBackup(places.value, photos, new Date(), gallery, catalog().custom, droneSetup.value, checklist.value);
 }
 
 export function lastBackupTxt(): string {
@@ -641,6 +647,10 @@ export async function runImport(file: File): Promise<number> {
   if (plan.drone) {
     droneSetup.value = plan.drone;
     await writeSetup(plan.drone);
+  }
+  if (plan.checklist != null) {
+    checklist.value = plan.checklist;
+    await writeChecklist(plan.checklist);
   }
   await persist();
   return plan.added.length;
@@ -746,6 +756,11 @@ export async function boot() {
     droneSetup.value = await readSetup();
   } catch {
     /* zostaje limit 10 m/s */
+  }
+  try {
+    checklist.value = await readChecklist();
+  } catch {
+    /* zostaje lista startowa */
   }
   try {
     places.value = await loadPlaces();
