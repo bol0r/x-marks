@@ -1,6 +1,8 @@
-import { useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import { catalog, ICONS, PALETTE } from "../../core/cats";
 import { fmtMapSize, MAP_LIMIT_BYTES } from "../../core/offline-map";
+import { cleanSetup } from "../../core/verdict";
+import { writeSetup } from "../../data/drone";
 import {
   addCategory,
   closeSheet,
@@ -13,7 +15,7 @@ import {
   saveOfflineMap,
   toggleFav,
 } from "../controller";
-import { catRev, mapBytes, places } from "../state";
+import { catRev, droneSetup, mapBytes, places } from "../state";
 import { IconArt } from "./Icons";
 import { Sheet } from "./Sheet";
 
@@ -22,7 +24,23 @@ export function DataSheet() {
   const [name, setName] = useState("");
   const [color, setColor] = useState<(typeof PALETTE)[number]>("--mark");
   const [icon, setIcon] = useState<(typeof ICONS)[number]>("eye");
+  const [model, setModel] = useState(droneSetup.value.model);
+  const [limit, setLimit] = useState(String(droneSetup.value.windLimit));
   const book = catalog();
+
+  useEffect(() => {
+    setModel(droneSetup.value.model);
+    setLimit(String(droneSetup.value.windLimit));
+  }, []);
+
+  function saveDrone(nextModel: string, nextLimit: string) {
+    const parsed = Number(nextLimit.replace(",", "."));
+    const clean = cleanSetup({ model: nextModel, windLimit: parsed });
+    droneSetup.value = clean;
+    setModel(clean.model);
+    setLimit(String(clean.windLimit));
+    void writeSetup(clean);
+  }
   return (
     <Sheet onClose={closeSheet}>
       <h2 data-rev={catRev.value}>Dane</h2>
@@ -80,6 +98,32 @@ export function DataSheet() {
           </button>
         ))}
       </div>
+      <p>Dron: model i limit wiatru. Klasa C0 to około 10 m/s. Werdykt jest na karcie.</p>
+      <label class="field" for="droneModel">
+        Model
+        <input
+          id="droneModel"
+          type="text"
+          placeholder="np. Mini 4"
+          value={model}
+          onInput={(e) => setModel((e.target as HTMLInputElement).value)}
+          onChange={(e) => saveDrone((e.target as HTMLInputElement).value, limit)}
+        />
+      </label>
+      <label class="field" for="windLimit">
+        Limit wiatru, m/s
+        <input
+          id="windLimit"
+          type="number"
+          inputMode="decimal"
+          min="1"
+          max="30"
+          step="0.5"
+          value={limit}
+          onInput={(e) => setLimit((e.target as HTMLInputElement).value)}
+          onChange={(e) => saveDrone(model, (e.target as HTMLInputElement).value)}
+        />
+      </label>
       <p>
         Miejsca i zdjęcia są zapisane tylko na tym telefonie ({places.value.length} szt.). Nikt inny ich nie widzi, nawet pod tym samym
         adresem. Ostatnia kopia: <b>{lastBackupTxt()}</b>.

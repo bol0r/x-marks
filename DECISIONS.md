@@ -1,5 +1,6 @@
 # Decyzje agenta
 
+- Werdykt to Odpuść, gdy porywy albo wiatr osiągają limit (domyślnie 10 m/s, klasa C0), opad jest od 0,5 mm, temperatura spada poniżej 0 °C albo Kp jest co najmniej 5; Ryzyko zaczyna się od 70% limitu, słabszego opadu i Kp od 4, a brak Kp nie obniża werdyktu i limit jedzie w kopii JSON.
 - Porywy na 80 m i 120 m powstają ze stosunku wiatru do porywów na 10 m, bo Open-Meteo podaje porywy tylko tam; cache 30 min jest w meta Dexie (współrzędne do 0,01°) i nie wchodzi do kopii miejsc.
 - Kafelki okolicy (około 10 km, zoom 12–14) lądują w osobnej bazie `xmarks-map` z limitem 40 MB; w trybie samolotowym mapa bierze je stamtąd, a miejsca zostają w `xmarks-db`.
 - Szukanie składa polskie znaki na telefonie (także „ł” → „l”) i patrzy w nazwę, notatkę, adres i tagi, bez sieci.

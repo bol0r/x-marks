@@ -25,6 +25,7 @@ export const lastBackup = signal<{ ts: number; n: number } | null>(typeof localS
 export const fixRev = signal(0);
 export const photoRev = signal(0);
 export const busyCat = signal<Cat | null>(null);
+export const droneSetup = signal({ model: "", windLimit: 10 });
 
 export interface ToastAction {
   label: string;
