@@ -5,6 +5,7 @@ import { CATS } from "../core/cats";
 import { dist, fmtDist } from "../core/geo";
 import { esc, navUrl, titleOf } from "../core/format";
 import type { Fix, Place } from "../core/types";
+import { correctPlace } from "../ui/controller";
 import { filter, fixRev, inFrame, lastFix, shown, sortNear, view } from "../ui/state";
 
 const note = signal("");
@@ -15,10 +16,12 @@ let map: MlMap | null = null;
 let markers: Marker[] = [];
 let drawGen = 0;
 
-function xEl(cat: Place["cat"]) {
+function xEl(p: Place) {
   const el = document.createElement("div");
-  el.className = "mx";
-  el.innerHTML = `<svg viewBox="0 0 30 30" style="--c:var(${CATS[cat].color})"><path class="halo" d="M7 7L23 23M23 7L7 23"/><path class="ink" d="M7 7L23 23M23 7L7 23"/></svg>`;
+  el.className = p.approx ? "mx approx" : "mx";
+  el.dataset.id = p.id;
+  if (p.approx) el.dataset.approx = "1";
+  el.innerHTML = `<svg viewBox="0 0 30 30" style="--c:var(${CATS[p.cat].color})"><rect width="30" height="30" fill="transparent"/><path class="halo" d="M7 7L23 23M23 7L7 23"/><path class="ink" d="M7 7L23 23M23 7L7 23"/></svg>`;
   return el;
 }
 
@@ -82,7 +85,14 @@ async function draw(el: HTMLElement, items: Place[], fix: Fix | null) {
     const popup = new ml.Popup({ offset: 16, closeButton: false }).setHTML(
       `<b>${esc(titleOf(p))}</b><br>${CATS[p.cat].label}${fix ? " · " + fmtDist(dist(fix, p)) : ""}${p.note ? "<br><i>" + esc(p.note) + "</i>" : ""}<br><a href="${navUrl(p)}" target="_blank" rel="noopener">Prowadź →</a>`,
     );
-    markers.push(new ml.Marker({ element: xEl(p.cat) }).setLngLat([p.lng, p.lat]).setPopup(popup).addTo(current));
+    const marker = new ml.Marker({ element: xEl(p), draggable: !!p.approx }).setLngLat([p.lng, p.lat]).setPopup(popup).addTo(current);
+    if (p.approx) {
+      marker.on("dragend", () => {
+        const ll = marker.getLngLat();
+        void correctPlace(p.id, ll.lat, ll.lng);
+      });
+    }
+    markers.push(marker);
   }
   const trail = current.getSource("trail") as GeoJSONSource | undefined;
   let line: GeoJSON.FeatureCollection = { type: "FeatureCollection", features: [] };
@@ -131,7 +141,9 @@ export function MapView() {
   const host = useRef<HTMLDivElement>(null);
   const active = view.value === "map";
   const rev = fixRev.value;
-  const placeSnap = shown.value.map((p) => `${p.id}:${p.lat}:${p.lng}:${p.cat}:${p.note}:${p.name}:${p.addr}`).join("|");
+  const placeSnap = shown.value
+    .map((p) => `${p.id}:${p.lat}:${p.lng}:${p.cat}:${p.note}:${p.name}:${p.addr}:${p.approx ? 1 : 0}`)
+    .join("|");
   useEffect(() => {
     if (!active || !host.current) return;
     void draw(host.current, shown.value, lastFix.value).catch(() => {
