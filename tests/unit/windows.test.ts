@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { sunTimes } from "../../src/core/sun";
+import { goldenLine, sunTimes } from "../../src/core/sun";
 import type { FlightSetup } from "../../src/core/verdict";
 import type { WxHour } from "../../src/core/weather";
 import { nextGoodHour, sortWindows, type WindowRow } from "../../src/core/windows";
@@ -31,6 +31,9 @@ describe("słońce i okno lotów", () => {
     near(sun!.dusk, "2026-10-12T16:39:29Z");
     expect(sun!.goldenMorningEnd).toBeGreaterThan(sun!.sunrise);
     expect(sun!.goldenEveningStart).toBeLessThan(sun!.sunset);
+    const line = goldenLine(Date.parse("2026-10-12T12:00:00Z"), 51.11, 17.03, "UTC");
+    expect(line).toMatch(/^zachód 16:\d\d · złota \d\d:\d\d–16:\d\d$/);
+    expect(goldenLine(Date.parse("2026-10-12T12:00:00Z"), Number.NaN, 17)).toBeNull();
   });
 
   it("sortuje miejsca po najbliższym dobrym oknie", () => {

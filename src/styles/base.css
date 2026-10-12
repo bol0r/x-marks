@@ -357,6 +357,12 @@ main {
   overflow-wrap: anywhere;
   letter-spacing: -0.01em;
 }
+.gold {
+  margin: var(--s-3) 0 0;
+  color: var(--muted);
+  font: 12px var(--body);
+  overflow-wrap: anywhere;
+}
 .note {
   margin-top: var(--s-5);
   padding-left: var(--s-6);

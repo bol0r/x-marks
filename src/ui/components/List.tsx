@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "preact/hooks";
 import { catOf } from "../../core/cats";
 import { dist, fmtCoords, fmtDist, fmtWhen } from "../../core/geo";
+import { goldenLine } from "../../core/sun";
 import { navUrl, shareText, titleOf } from "../../core/format";
 import { olcEncode } from "../../core/olc";
 import type { Place } from "../../core/types";
@@ -54,6 +55,7 @@ function Card({ p, marked }: { p: Place; marked?: boolean }) {
   const addrBit = p.name && p.addr ? p.addr : "";
   const stars = p.stars ?? 0;
   const tags = p.tags ?? [];
+  const gold = goldenLine(Date.now(), p.lat, p.lng);
   return (
     <div class="sw" data-id={p.id} data-coach={marked ? "card" : undefined}>
       <i class="xm" style={`--c:var(${catOf(p.cat).color})`}>
@@ -89,6 +91,11 @@ function Card({ p, marked }: { p: Place; marked?: boolean }) {
             {olcEncode(p.lat, p.lng)} · {fmtCoords(p)}
             {p.acc != null ? ` · ±${p.acc} m` : ""}
           </div>
+          {gold ? (
+            <p class="gold" data-gold>
+              {gold}
+            </p>
+          ) : null}
           {p.note ? <div class="note">{p.note}</div> : null}
           {tags.length ? (
             <div class="tags">
