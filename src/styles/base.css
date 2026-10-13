@@ -844,6 +844,28 @@ main {
 .checks li[data-done="1"] .check-name {
   color: var(--muted);
 }
+.log-row {
+  display: grid;
+  gap: var(--s-1);
+  padding: var(--s-5) 0;
+  border-top: 1px dashed var(--line);
+}
+.log-row b {
+  font-family: var(--display);
+  font-weight: 650;
+}
+.log-row span {
+  color: var(--muted);
+  font: 13px var(--body);
+  overflow-wrap: anywhere;
+}
+#logFiles {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  font: 13px var(--body);
+  color: var(--fg);
+}
 .me {
   width: var(--s-9);
   height: var(--s-9);
@@ -1176,7 +1198,9 @@ textarea {
 }
 textarea,
 input[type="text"],
-input[type="number"] {
+input[type="number"],
+input[type="date"],
+input[type="time"] {
   width: 100%;
   box-sizing: border-box;
   background: var(--bg);
@@ -1188,7 +1212,9 @@ input[type="number"] {
 }
 textarea:focus,
 input[type="text"]:focus,
-input[type="number"]:focus {
+input[type="number"]:focus,
+input[type="date"]:focus,
+input[type="time"]:focus {
   outline: none;
   border-color: var(--fg);
 }

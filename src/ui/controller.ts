@@ -10,7 +10,9 @@ import { fmtWhen } from "../core/geo";
 import { titleOf } from "../core/format";
 import { toGPX } from "../core/format";
 import { geocode, reverseGeocodeAddress } from "../core/nominatim";
-import { blobToDataURL, dataURLToBlob, planImport, serializeBackup } from "../data/backup";
+import { blobToDataURL, dataURLToBlob, planImport, serializeBackup, type BackupClip } from "../data/backup";
+import { flightsCsv } from "../core/log";
+import { addClips, clipCounts, readAllClips, readFlights, writeFlight } from "../data/log";
 import { readChecklist, writeChecklist } from "../data/checklist";
 import { readSetup, writeSetup } from "../data/drone";
 import { loadBackupStamp, loadPlacesSync, markSwiped, saveBackupStamp, saveView } from "../data/legacy";
@@ -185,6 +187,11 @@ export function openWindows() {
 
 export function openChecklist() {
   sheet.value = { kind: "checks" };
+}
+
+export function openLog(id: string) {
+  if (!places.value.some((p) => p.id === id)) return;
+  sheet.value = { kind: "log", id };
 }
 
 export function closeSheet() {
@@ -567,7 +574,20 @@ export async function backupJSON(): Promise<string> {
     }
     if (!gallery[p.id]?.length) delete gallery[p.id];
   }
-  return serializeBackup(places.value, photos, new Date(), gallery, catalog().custom, droneSetup.value, checklist.value);
+  const flights = await readFlights();
+  const media: BackupClip[] = [];
+  try {
+    for (const row of await readAllClips()) {
+      try {
+        media.push({ id: row.id, flightId: row.flightId, ord: row.ord, kind: row.kind, dataUrl: await blobToDataURL(row.blob) });
+      } catch {
+        /* pomiń uszkodzony klip, reszta dziennika zostaje */
+      }
+    }
+  } catch {
+    /* dziennik bez klipów, gdy baza klipów nie wstanie */
+  }
+  return serializeBackup(places.value, photos, new Date(), gallery, catalog().custom, droneSetup.value, checklist.value, flights, media);
 }
 
 export function lastBackupTxt(): string {
@@ -652,6 +672,16 @@ export async function runImport(file: File): Promise<number> {
     checklist.value = plan.checklist;
     await writeChecklist(plan.checklist);
   }
+  if (plan.flights != null) {
+    const have = new Set((await readFlights()).map((flight) => flight.id));
+    for (const flight of plan.flights) {
+      if (have.has(flight.id)) continue;
+      await writeFlight(flight);
+    }
+  }
+  if (plan.clips != null) {
+    await addClips(plan.clips.map((clip) => ({ ...clip, blob: dataURLToBlob(clip.dataUrl) })));
+  }
   await persist();
   return plan.added.length;
 }
@@ -700,6 +730,16 @@ export async function copyJSON(msg: (t: string) => void) {
   } catch {
     msg("Schowek zablokowany. Użyj Zapisz kopię.");
   }
+}
+
+export async function downloadLog(msg?: (t: string) => void) {
+  const flights = (await readFlights()).map((flight) => {
+    const place = places.value.find((item) => item.id === flight.placeId);
+    return { ...flight, placeName: place ? titleOf(place) : flight.placeName || "usunięte miejsce" };
+  });
+  const counts = await clipCounts();
+  await dl("dziennik-lotow.csv", flightsCsv(flights, counts), "text/csv;charset=utf-8", msg);
+  msg?.("Plik dziennik-lotow.csv pobrany.");
 }
 
 export async function downloadGPX(msg?: (t: string) => void) {

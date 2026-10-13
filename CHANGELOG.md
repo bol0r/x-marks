@@ -1,5 +1,6 @@
 # Zmiany
 
+- Faza 2 — dziennik lotów: przy miejscu dopisujesz lot z datą, czasem, baterią, notatką i zdjęciem, widać liczbę lotów, łączny czas i ulubione miejsce, a CSV zabiera cały dziennik.
 - Faza 2 — checklista przedlotowa: przed startem odhaczasz baterie, kartę, śmigła, strefę i zgodę, a po locie lista wraca do zera.
 - Faza 2 — strefy: miejsce w CTR Wrocław dostaje znacznik, a „Sprawdź strefę” otwiera DroneMap PAŻP na współrzędnych.
 - Faza 2 — złota godzina: na każdej karcie jest dzisiejszy zachód i złota godzina, liczone offline.

@@ -8,8 +8,8 @@ const CORE = {
   meta: "key",
 };
 
-function stores(photos: string) {
-  return { ...CORE, photos };
+function stores(photos: string, extra: Record<string, string> = {}) {
+  return { ...CORE, photos, ...extra };
 }
 
 export interface PhotoRow {
@@ -27,7 +27,19 @@ export interface MetaRow {
 export interface FlightRow {
   id: string;
   placeId: string;
+  placeName: string;
   ts: number;
+  minutes: number;
+  battery: number | null;
+  note: string;
+}
+
+export interface ClipRow {
+  id: string;
+  flightId: string;
+  ord: number;
+  kind: "photo" | "clip";
+  blob: Blob;
 }
 
 export interface VisitRow {
@@ -40,6 +52,7 @@ export class XMarksDB extends Dexie {
   places!: Table<Place, string>;
   photos!: Table<PhotoRow, string>;
   flights!: Table<FlightRow, string>;
+  clips!: Table<ClipRow, string>;
   visits!: Table<VisitRow, string>;
   meta!: Table<MetaRow, string>;
 
@@ -76,6 +89,19 @@ export class XMarksDB extends Dexie {
           .modify((place: Place) => {
             if (!Array.isArray(place.tags)) place.tags = [];
             if (typeof place.stars !== "number") place.stars = 0;
+          });
+      });
+    this.version(5)
+      .stores(stores("id, placeId, ord", { clips: "id, flightId, ord" }))
+      .upgrade(async (tx) => {
+        await tx
+          .table("flights")
+          .toCollection()
+          .modify((row: Partial<FlightRow>) => {
+            if (typeof row.placeName !== "string") row.placeName = "";
+            if (typeof row.minutes !== "number") row.minutes = 0;
+            if (!("battery" in row)) row.battery = null;
+            if (typeof row.note !== "string") row.note = "";
           });
       });
   }
