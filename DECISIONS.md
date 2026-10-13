@@ -1,5 +1,6 @@
 # Decyzje agenta
 
+- Checkbox CI/CD był tylko księgowy: workflow już robi lint, tsc, testy, e2e i build, a deploy na Pages startuje dopiero po zielonym checku i tylko z pusha na main.
 - Dziennik lotów jest w Dexie v5 (tabela clips oraz pola czasu, baterii, notatki i nazwy miejsca); stary lot dostaje puste pola, kopia JSON wozi loty i załączniki, a plik bez dziennika go nie kasuje.
 - Lista przedlotowa siedzi w meta Dexie (klucz checklist) i w kopii JSON; stary plik bez tego pola jej nie kasuje, a „Po locie” tylko zdejmuje ptaszki.
 - Znacznik CTR Wrocław to uproszczony okrąg 12 km wokół punktu odniesienia lotniska EPWR z mapy AIP, trzymany w lokalnym GeoJSON; przycisk otwiera DroneMap PAŻP na tych współrzędnych, bo żywe strefy geograficzne są tylko tam.
