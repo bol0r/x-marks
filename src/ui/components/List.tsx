@@ -6,7 +6,7 @@ import { droneMapUrl, zoneLabel } from "../../core/zones";
 import { navUrl, shareText, titleOf } from "../../core/format";
 import { olcEncode } from "../../core/olc";
 import type { Place } from "../../core/types";
-import { archive, copyText, markSwipedOnce, openChecklist, openEdit, removePlace } from "../controller";
+import { archive, copyText, markSwipedOnce, openChecklist, openEdit, openLog, removePlace } from "../controller";
 import { catRev, coach, filter, lastFix, places, ready, showSplash, shown, swipedOnce, view } from "../state";
 import { EmptyAll, EmptyFilter } from "./Empty";
 import { CatIcon } from "./Icons";
@@ -124,6 +124,9 @@ function Card({ p, marked }: { p: Place; marked?: boolean }) {
             <button type="button" data-a="edit">
               Edytuj
             </button>
+            <button type="button" data-a="log">
+              Dziennik
+            </button>
             {p.cat === "dron" ? (
               <a href={droneMapUrl(p.lat, p.lng)} target="_blank" rel="noopener" data-a="zone">
                 Sprawdź strefę
@@ -192,6 +195,10 @@ export function PlaceList() {
       const b = t.closest("button[data-a]") as HTMLButtonElement | null;
       if (b?.dataset.a === "check") {
         openChecklist();
+        return;
+      }
+      if (b?.dataset.a === "log") {
+        openLog(id);
         return;
       }
       if (b?.dataset.a === "copy") {

@@ -7,6 +7,7 @@ import { Splash } from "../components/Splash";
 import { Toast } from "../components/Toast";
 import { Toolbar } from "../components/Toolbar";
 import { ChecklistSheet } from "../components/Checklist";
+import { LogSheet } from "../components/LogSheet";
 import { DataSheet } from "../components/DataSheet";
 import { WindowsSheet } from "../components/Windows";
 import { EditSheet } from "../components/EditSheet";
@@ -35,6 +36,7 @@ export function Home() {
       {s?.kind === "data" ? <DataSheet /> : null}
       {s?.kind === "windows" ? <WindowsSheet /> : null}
       {s?.kind === "checks" ? <ChecklistSheet /> : null}
+      {s?.kind === "log" ? <LogSheet placeId={s.id} /> : null}
       <Coach />
       <Radar />
     </>

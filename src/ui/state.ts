@@ -50,7 +50,8 @@ export type SheetModel =
   | { kind: "paste"; cat: Cat | null; prefill: string }
   | { kind: "data" }
   | { kind: "windows" }
-  | { kind: "checks" };
+  | { kind: "checks" }
+  | { kind: "log"; id: string };
 
 export const sheet = signal<SheetModel | null>(null);
 

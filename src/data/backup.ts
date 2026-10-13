@@ -1,6 +1,7 @@
 import { cleanChecklist, type CheckItem } from "../core/checklist";
 import { isBuiltin, isCat, isIcon, isPalette, type CatDef } from "../core/cats";
 import { GALLERY_MAX } from "../core/gallery";
+import { cleanFlight, cleanFlights, type FlightLog } from "../core/log";
 import { cleanStars, cleanTags } from "../core/tags";
 import { cleanSetup, type FlightSetup } from "../core/verdict";
 import type { Place } from "../core/types";
@@ -12,6 +13,14 @@ export interface BackupPhoto {
   dataUrl: string;
 }
 
+export interface BackupClip {
+  id: string;
+  flightId: string;
+  ord: number;
+  kind: "photo" | "clip";
+  dataUrl: string;
+}
+
 export interface ImportPlan {
   added: Place[];
   photos: BackupPhoto[];
@@ -20,6 +29,33 @@ export interface ImportPlan {
   drone: FlightSetup | null;
   /** null, gdy plik nie ma checklisty — import jej nie nadpisuje. */
   checklist: CheckItem[] | null;
+  /** null, gdy plik nie ma dziennika — import go nie rusza. */
+  flights: FlightLog[] | null;
+  clips: BackupClip[] | null;
+}
+
+function cleanBackupClips(raw: unknown): BackupClip[] | null {
+  if (!Array.isArray(raw)) return null;
+  const out: BackupClip[] = [];
+  const seen = new Set<string>();
+  for (const item of raw) {
+    if (!item || typeof item !== "object") continue;
+    const row = item as Partial<BackupClip>;
+    const id = typeof row.id === "string" ? row.id.trim().slice(0, 24) : "";
+    const flightId = typeof row.flightId === "string" ? row.flightId.trim().slice(0, 24) : "";
+    const dataUrl = typeof row.dataUrl === "string" ? row.dataUrl : "";
+    if (!id || !flightId || !dataUrl.startsWith("data:") || seen.has(id)) continue;
+    seen.add(id);
+    out.push({
+      id,
+      flightId,
+      ord: Number.isFinite(row.ord) ? Math.max(0, Math.round(row.ord as number)) : out.length,
+      kind: row.kind === "clip" ? "clip" : "photo",
+      dataUrl,
+    });
+    if (out.length >= 500) break;
+  }
+  return out;
 }
 
 export function serializeBackup(
@@ -30,11 +66,15 @@ export function serializeBackup(
   categories: CatDef[] = [],
   drone: FlightSetup | null = null,
   checklist: CheckItem[] | null = null,
+  flights: FlightLog[] | null = null,
+  clips: BackupClip[] | null = null,
 ): string {
   const ordered = Object.keys(gallery).length > 0;
   const custom = categories.filter((c) => c.id && !isBuiltin(c.id));
   const setup = drone ? cleanSetup(drone) : null;
   const checks = checklist ? cleanChecklist({ items: checklist }) : null;
+  const log = flights ? flights.map((item) => cleanFlight(item)).filter((item): item is FlightLog => item != null) : null;
+  const media = clips ? cleanBackupClips(clips) : null;
   return JSON.stringify({
     app: "x-marks",
     v: ordered || custom.length ? 3 : 2,
@@ -45,6 +85,8 @@ export function serializeBackup(
     ...(custom.length ? { categories: custom } : {}),
     ...(setup ? { drone: setup } : {}),
     ...(checks ? { checklist: { items: checks } } : {}),
+    ...(log ? { flights: log } : {}),
+    ...(media ? { clips: media } : {}),
   });
 }
 
@@ -56,9 +98,13 @@ export function planImport(existing: Place[], data: unknown): ImportPlan {
     categories?: unknown;
     drone?: unknown;
     checklist?: unknown;
+    flights?: unknown;
+    clips?: unknown;
   };
   const drone = data && typeof data === "object" && "drone" in data ? cleanSetup(rec.drone) : null;
   const checklist = data && typeof data === "object" && "checklist" in data ? cleanChecklist(rec.checklist) : null;
+  const flights = data && typeof data === "object" && "flights" in data ? cleanFlights(rec.flights) : null;
+  const clips = data && typeof data === "object" && "clips" in data ? cleanBackupClips(rec.clips) : null;
   const arr = Array.isArray(data) ? data : Array.isArray(rec.places) ? rec.places : null;
   if (!arr) throw new Error("format");
   const photos = rec.photos && typeof rec.photos === "object" ? (rec.photos as Record<string, string>) : ({} as Record<string, string>);
@@ -98,7 +144,7 @@ export function planImport(existing: Place[], data: unknown): ImportPlan {
     added.push(q);
     ids.add(p.id);
   }
-  return { added, photos: photoPlan, categories, drone, checklist };
+  return { added, photos: photoPlan, categories, drone, checklist, flights, clips };
 }
 
 export function dataURLToBlob(u: string): Blob {
