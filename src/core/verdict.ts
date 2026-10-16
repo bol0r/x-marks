@@ -3,10 +3,26 @@ import type { WxHour } from "./weather";
 /** Domyślny limit klasy C0. */
 export const DEFAULT_WIND_LIMIT = 10;
 
+export const DRONE_CLASSES = ["C0", "C1", "C2", "C3", "C4"] as const;
+export type DroneClass = (typeof DRONE_CLASSES)[number];
+
+/** Lokalne progi startowe, nie przepis. Użytkownik może je nadpisać. */
+export const CLASS_WIND: Record<DroneClass, number> = {
+  C0: 10,
+  C1: 12,
+  C2: 14,
+  C3: 15,
+  C4: 10,
+};
+
 export interface FlightSetup {
   model: string;
+  /** Gramy. 0 = niepodane. */
+  mass: number;
+  droneClass: DroneClass;
   /** m/s. Porywy od tego progu = Odpuść. */
   windLimit: number;
+  operator: string;
 }
 
 export type VerdictLevel = "go" | "risk" | "stop";
@@ -25,12 +41,37 @@ const HEIGHTS: { key: "h10" | "h80" | "h120"; label: string }[] = [
   { key: "h120", label: "120 m" },
 ];
 
+function isClass(value: unknown): value is DroneClass {
+  return typeof value === "string" && (DRONE_CLASSES as readonly string[]).includes(value);
+}
+
 export function cleanSetup(raw: unknown): FlightSetup {
-  const rec = raw && typeof raw === "object" ? (raw as { model?: unknown; windLimit?: unknown }) : {};
+  const rec = raw && typeof raw === "object" ? (raw as Record<string, unknown>) : {};
   const model = typeof rec.model === "string" ? rec.model.trim().slice(0, 40) : "";
+  const massN = typeof rec.mass === "number" ? rec.mass : Number(rec.mass);
+  const mass = Number.isFinite(massN) && massN > 0 ? Math.min(25000, Math.round(massN)) : 0;
+  const droneClass = isClass(rec.droneClass) ? rec.droneClass : isClass(rec.class) ? rec.class : "C0";
   const n = typeof rec.windLimit === "number" ? rec.windLimit : Number(rec.windLimit);
-  const windLimit = Number.isFinite(n) && n >= 1 && n <= 30 ? Math.round(n * 10) / 10 : DEFAULT_WIND_LIMIT;
-  return { model, windLimit };
+  const windLimit = Number.isFinite(n) && n >= 1 && n <= 30 ? Math.round(n * 10) / 10 : CLASS_WIND[droneClass];
+  const operator = typeof rec.operator === "string" ? rec.operator.trim().slice(0, 32) : "";
+  return { model, mass, droneClass, windLimit, operator };
+}
+
+/** Klasa podmienia limit tylko wtedy, gdy był domyślny dla poprzedniej klasy. */
+export function withClass(setup: FlightSetup, next: DroneClass): FlightSetup {
+  const custom = setup.windLimit !== CLASS_WIND[setup.droneClass];
+  return cleanSetup({ ...setup, droneClass: next, windLimit: custom ? setup.windLimit : CLASS_WIND[next] });
+}
+
+export function limitOf(setup: FlightSetup): number {
+  const n = setup.windLimit;
+  if (Number.isFinite(n) && n >= 1 && n <= 30) return n;
+  return CLASS_WIND[setup.droneClass] ?? DEFAULT_WIND_LIMIT;
+}
+
+export function profileLine(setup: FlightSetup): string {
+  const bits = [setup.model, setup.droneClass, setup.mass > 0 ? `${setup.mass} g` : "", `limit ${numText(limitOf(setup))} m/s`];
+  return bits.filter(Boolean).join(" · ");
 }
 
 function numText(n: number): string {
@@ -54,7 +95,7 @@ function worst(hour: WxHour, field: "wind" | "gust"): { v: number; h: string } |
  * Brak Kp nie obniża werdyktu.
  */
 export function judgeFlight(hour: WxHour, setup: FlightSetup, kp: number | null): Verdict {
-  const limit = setup.windLimit > 0 ? setup.windLimit : DEFAULT_WIND_LIMIT;
+  const limit = limitOf(setup);
   const stops: string[] = [];
   const risks: string[] = [];
   const gust = worst(hour, "gust");

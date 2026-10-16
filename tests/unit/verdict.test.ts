@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import type { Place } from "../../src/core/types";
-import { judgeFlight, parseKp, type FlightSetup } from "../../src/core/verdict";
+import { cleanSetup, judgeFlight, parseKp, withClass, type FlightSetup } from "../../src/core/verdict";
 import type { WxHour } from "../../src/core/weather";
 import { planImport, serializeBackup } from "../../src/data/backup";
 
-const setup = (windLimit: number): FlightSetup => ({ model: "Mini 4", windLimit });
+const setup = (windLimit: number): FlightSetup => ({ model: "Mini 4", mass: 0, droneClass: "C0", windLimit, operator: "" });
 
 function hour(extra: Partial<WxHour> = {}): WxHour {
   return {
@@ -64,9 +64,16 @@ describe("werdykt lotu", () => {
     ).toBe(3.33);
     expect(parseKp({ error: true })).toBeNull();
 
-    const raw = serializeBackup([place("a")], {}, new Date("2026-01-02T00:00:00Z"), {}, [], { model: "Mini 4", windLimit: 20 });
+    const raw = serializeBackup([place("a")], {}, new Date("2026-01-02T00:00:00Z"), {}, [], cleanSetup({ model: "Mini 4", windLimit: 20 }));
     const plan = planImport([], JSON.parse(raw));
-    expect(plan.drone).toEqual({ model: "Mini 4", windLimit: 20 });
+    expect(plan.drone).toEqual({ model: "Mini 4", mass: 0, droneClass: "C0", windLimit: 20, operator: "" });
+    const legacy = planImport([], { places: [place("c")], photos: {}, drone: { model: "Mini 4", windLimit: 20 } });
+    expect(legacy.drone).toEqual({ model: "Mini 4", mass: 0, droneClass: "C0", windLimit: 20, operator: "" });
+    expect(cleanSetup({ model: "Mini 4", windLimit: 20, class: "C1" }).droneClass).toBe("C1");
+    const raised = withClass(cleanSetup({ windLimit: 10 }), "C2");
+    expect(raised.windLimit).toBe(14);
+    expect(judgeFlight(hour({ h80: { wind: 6.5, gust: 13 } }), raised, 2).label).toBe("Ryzyko");
+    expect(withClass(cleanSetup({ windLimit: 20 }), "C2").windLimit).toBe(20);
     expect(plan.added[0]?.note).toBe("zostaw");
 
     const old = planImport([place("a")], { places: [place("b")], photos: {} });

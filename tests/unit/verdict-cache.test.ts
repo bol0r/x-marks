@@ -1,6 +1,7 @@
 import "fake-indexeddb/auto";
 import { afterEach, describe, expect, it } from "vitest";
 import type { Place } from "../../src/core/types";
+import { cleanSetup } from "../../src/core/verdict";
 import { XMarksDB } from "../../src/data/db";
 import { readSetup, writeSetup } from "../../src/data/drone";
 import { loadKp, resetKpMemory } from "../../src/data/kp";
@@ -33,9 +34,9 @@ describe("cache Kp i profil limitu", () => {
   it("zapis limitu nie rusza miejsca, a Kp jest świeży przez 30 minut", async () => {
     current = new XMarksDB(`verdict-${Date.now()}`);
     await current.places.add(place);
-    await writeSetup({ model: "Mini 4", windLimit: 12 }, current);
+    await writeSetup(cleanSetup({ model: "Mini 4", windLimit: 12 }), current);
     expect((await current.places.get("a"))?.note).toBe("zostaw");
-    expect(await readSetup(current)).toEqual({ model: "Mini 4", windLimit: 12 });
+    expect(await readSetup(current)).toEqual({ model: "Mini 4", mass: 0, droneClass: "C0", windLimit: 12, operator: "" });
 
     const hits = { n: 0 };
     const fetchOk = (async () => {

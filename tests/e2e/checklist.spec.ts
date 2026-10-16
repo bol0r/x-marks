@@ -42,6 +42,7 @@ test("odhaczanie przed lotem zostaje, a po locie wraca do zera", async ({ page }
   await page.locator("#checkNew").fill("Latarka");
   await page.locator("#addCheck").click();
   await expect(list.getByLabel("Nazwa: Latarka")).toBeVisible();
+  await expect(list).toHaveAttribute("data-saved", "2");
 
   await openReady(page);
   await page.locator('article.item button[data-a="check"]').click();

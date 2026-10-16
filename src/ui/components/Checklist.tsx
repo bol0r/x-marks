@@ -8,17 +8,18 @@ import { Sheet } from "./Sheet";
 export function ChecklistSheet() {
   const items = checklist.value;
   const [draft, setDraft] = useState("");
+  const [saved, setSaved] = useState(0);
 
   function commit(next: typeof items) {
     checklist.value = next;
-    void writeChecklist(next);
+    void writeChecklist(next).then(() => setSaved((n) => n + 1));
   }
 
   return (
     <Sheet onClose={closeSheet}>
       <h2>Przed lotem</h2>
       <p>Odhacz przed startem. Po locie lista wraca do zera.</p>
-      <ul id="checks" class="checks">
+      <ul id="checks" class="checks" data-saved={saved}>
         {items.map((item) => (
           <li key={item.id} data-id={item.id} data-done={item.done ? "1" : "0"}>
             <input
