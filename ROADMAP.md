@@ -89,7 +89,7 @@ public/        icons, manifest
 - [x] **Tokeny.** Wszystkie kolory, fonty, promienie i cienie w `src/styles/tokens.css`. Gotowe gdy: w komponentach nie ma żadnego literalnego koloru (poza nakładką na zdjęcie).
 - [x] **Dexie + migracja.** Tabele z sekcji 4. Przy pierwszym uruchomieniu przenieś `localStorage["xmarks.v1"]` (i `pinezki.v1`) oraz zdjęcia z bazy `xmarks/photos`. Gotowe gdy: test migracji przechodzi na danych z v0.4, nic nie ginie.
 - [x] **Testy.** Przenieś 22 testy do Vitest. Dodaj e2e Playwright: zapis z GPS (mock), Dodaj z nazwy (mock Nominatim), przesunięcie + cofnij, zdjęcie okładki, kopia → import. Gotowe gdy: `npm test` i `npm run e2e` zielone.
-- [ ] **CI/CD.** GitHub Actions: lint + testy + build + deploy na Pages. Gotowe gdy: push na `main` aktualizuje stronę, czerwony test blokuje deploy.
+- [x] **CI/CD.** GitHub Actions: lint + testy + build + deploy na Pages. Gotowe gdy: push na `main` aktualizuje stronę, czerwony test blokuje deploy.
 - [x] **Jakość.** ESLint + Prettier, `tsc --noEmit` w CI, Lighthouse PWA ≥ 90, bundle startowy < 120 KB gzip (mapa ładowana leniwie).
 
 ### Faza 1 — Teren i auto

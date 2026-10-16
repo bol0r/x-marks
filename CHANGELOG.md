@@ -1,5 +1,6 @@
 # Zmiany
 
+- Faza 0 — CI/CD: GitHub Actions puszcza lint, testy i build, a stronę wdraża tylko zielony push na main.
 - Faza 2 — dziennik lotów: przy miejscu dopisujesz lot z datą, czasem, baterią, notatką i zdjęciem, widać liczbę lotów, łączny czas i ulubione miejsce, a CSV zabiera cały dziennik.
 - Faza 2 — checklista przedlotowa: przed startem odhaczasz baterie, kartę, śmigła, strefę i zgodę, a po locie lista wraca do zera.
 - Faza 2 — strefy: miejsce w CTR Wrocław dostaje znacznik, a „Sprawdź strefę” otwiera DroneMap PAŻP na współrzędnych.
