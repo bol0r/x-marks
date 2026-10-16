@@ -39,11 +39,20 @@ export async function readChecklist(database: XMarksDB = db): Promise<CheckItem[
   return readLocal();
 }
 
-export async function writeChecklist(items: CheckItem[], database: XMarksDB = db): Promise<void> {
+let writeTail = Promise.resolve();
+
+export function writeChecklist(items: CheckItem[], database: XMarksDB = db): Promise<void> {
   const value = pack(items);
-  try {
-    await database.meta.put({ key: CHECK_META_KEY, value });
-  } catch {
-    writeLocal(value);
-  }
+  const run = writeTail.then(async () => {
+    try {
+      await database.meta.put({ key: CHECK_META_KEY, value });
+    } catch {
+      writeLocal(value);
+    }
+  });
+  writeTail = run.then(
+    () => undefined,
+    () => undefined,
+  );
+  return run;
 }

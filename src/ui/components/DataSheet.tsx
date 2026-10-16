@@ -1,7 +1,7 @@
 import { useEffect, useState } from "preact/hooks";
 import { catalog, ICONS, PALETTE } from "../../core/cats";
 import { fmtMapSize, MAP_LIMIT_BYTES } from "../../core/offline-map";
-import { cleanSetup } from "../../core/verdict";
+import { CLASS_WIND, DRONE_CLASSES, cleanSetup, withClass, type DroneClass, type FlightSetup } from "../../core/verdict";
 import { writeSetup } from "../../data/drone";
 import {
   addCategory,
@@ -25,20 +25,29 @@ export function DataSheet() {
   const [color, setColor] = useState<(typeof PALETTE)[number]>("--mark");
   const [icon, setIcon] = useState<(typeof ICONS)[number]>("eye");
   const [model, setModel] = useState(droneSetup.value.model);
+  const [mass, setMass] = useState(droneSetup.value.mass ? String(droneSetup.value.mass) : "");
+  const [klass, setKlass] = useState<DroneClass>(droneSetup.value.droneClass);
   const [limit, setLimit] = useState(String(droneSetup.value.windLimit));
+  const [operator, setOperator] = useState(droneSetup.value.operator);
   const book = catalog();
 
   useEffect(() => {
-    setModel(droneSetup.value.model);
-    setLimit(String(droneSetup.value.windLimit));
+    const setup = droneSetup.value;
+    setModel(setup.model);
+    setMass(setup.mass ? String(setup.mass) : "");
+    setKlass(setup.droneClass);
+    setLimit(String(setup.windLimit));
+    setOperator(setup.operator);
   }, []);
 
-  function saveDrone(nextModel: string, nextLimit: string) {
-    const parsed = Number(nextLimit.replace(",", "."));
-    const clean = cleanSetup({ model: nextModel, windLimit: parsed });
+  function commit(patch: Partial<FlightSetup>) {
+    const clean = cleanSetup({ ...droneSetup.value, ...patch });
     droneSetup.value = clean;
     setModel(clean.model);
+    setMass(clean.mass ? String(clean.mass) : "");
+    setKlass(clean.droneClass);
     setLimit(String(clean.windLimit));
+    setOperator(clean.operator);
     void writeSetup(clean);
   }
   return (
@@ -98,7 +107,7 @@ export function DataSheet() {
           </button>
         ))}
       </div>
-      <p>Dron: model i limit wiatru. Klasa C0 to około 10 m/s. Werdykt jest na karcie.</p>
+      <p>Profil drona zostaje na tym telefonie. Werdykt bierze z niego limit wiatru.</p>
       <label class="field" for="droneModel">
         Model
         <input
@@ -106,10 +115,38 @@ export function DataSheet() {
           type="text"
           placeholder="np. Mini 4"
           value={model}
-          onInput={(e) => setModel((e.target as HTMLInputElement).value)}
-          onChange={(e) => saveDrone((e.target as HTMLInputElement).value, limit)}
+          onInput={(e) => commit({ model: (e.target as HTMLInputElement).value })}
         />
       </label>
+      <label class="field" for="droneMass">
+        Masa, g
+        <input
+          id="droneMass"
+          type="number"
+          inputMode="numeric"
+          min="0"
+          max="25000"
+          placeholder="np. 249"
+          value={mass}
+          onInput={(e) => commit({ mass: Number((e.target as HTMLInputElement).value.replace(",", ".")) || 0 })}
+        />
+      </label>
+      <p class="hint">
+        Klasa. Domyślny limit: C0 {CLASS_WIND.C0}, C1 {CLASS_WIND.C1}, C2 {CLASS_WIND.C2}, C3 {CLASS_WIND.C3}, C4 {CLASS_WIND.C4} m/s.
+      </p>
+      <div class="seg" id="droneClass" style="--c:var(--dron)">
+        {DRONE_CLASSES.map((item) => (
+          <button
+            type="button"
+            data-class={item}
+            aria-label={`Klasa ${item}`}
+            aria-pressed={klass === item}
+            onClick={() => commit(withClass(droneSetup.value, item))}
+          >
+            {item}
+          </button>
+        ))}
+      </div>
       <label class="field" for="windLimit">
         Limit wiatru, m/s
         <input
@@ -120,8 +157,22 @@ export function DataSheet() {
           max="30"
           step="0.5"
           value={limit}
-          onInput={(e) => setLimit((e.target as HTMLInputElement).value)}
-          onChange={(e) => saveDrone(model, (e.target as HTMLInputElement).value)}
+          onInput={(e) => {
+            const raw = (e.target as HTMLInputElement).value;
+            setLimit(raw);
+            const n = Number(raw.replace(",", "."));
+            if (Number.isFinite(n) && n >= 1 && n <= 30) commit({ windLimit: n });
+          }}
+        />
+      </label>
+      <label class="field" for="droneOp">
+        Numer operatora
+        <input
+          id="droneOp"
+          type="text"
+          placeholder="zostaje tylko tutaj"
+          value={operator}
+          onInput={(e) => commit({ operator: (e.target as HTMLInputElement).value })}
         />
       </label>
       <p>

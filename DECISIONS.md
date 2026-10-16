@@ -1,5 +1,6 @@
 # Decyzje agenta
 
+- Profil drona (model, masa, klasa, limit, numer operatora) siedzi w meta Dexie i w kopii JSON; stary zapis zostawia model i limit, a werdykt bierze limit z profilu — klasa podmienia go tylko, gdy był domyślny dla poprzedniej klasy.
 - Checkbox CI/CD był tylko księgowy: workflow już robi lint, tsc, testy, e2e i build, a deploy na Pages startuje dopiero po zielonym checku i tylko z pusha na main.
 - Dziennik lotów jest w Dexie v5 (tabela clips oraz pola czasu, baterii, notatki i nazwy miejsca); stary lot dostaje puste pola, kopia JSON wozi loty i załączniki, a plik bez dziennika go nie kasuje.
 - Lista przedlotowa siedzi w meta Dexie (klucz checklist) i w kopii JSON; stary plik bez tego pola jej nie kasuje, a „Po locie” tylko zdejmuje ptaszki.

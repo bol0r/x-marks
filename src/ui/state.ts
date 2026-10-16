@@ -5,6 +5,7 @@ import type { Cat, Filter, Fix, Place, View } from "../core/types";
 import { dist } from "../core/geo";
 import { placeHits } from "../core/search";
 import { placeMatches } from "../core/tags";
+import { cleanSetup } from "../core/verdict";
 import { dexieReadyFlag, loadBackupStamp, loadPlacesSync, loadSwiped, loadView } from "../data/legacy";
 
 const hasStore = typeof localStorage !== "undefined";
@@ -26,7 +27,7 @@ export const lastBackup = signal<{ ts: number; n: number } | null>(typeof localS
 export const fixRev = signal(0);
 export const photoRev = signal(0);
 export const busyCat = signal<Cat | null>(null);
-export const droneSetup = signal({ model: "", windLimit: 10 });
+export const droneSetup = signal(cleanSetup(null));
 export const checklist = signal<CheckItem[]>(freshChecklist());
 
 export interface ToastAction {

@@ -130,7 +130,7 @@ public/        icons, manifest
 - [x] **Strefy.** Przycisk „Sprawdź strefę” otwiera mapę PAŻP (DroneMap) dla współrzędnych miejsca; jeśli da się, pokaż ostrzeżenie dla znanych stref (CTR Wrocław) z lokalnego GeoJSON. Gotowe gdy: miejsce w CTR dostaje widoczny znacznik.
 - [x] **Checklista przedlotowa.** Edytowalna lista (baterie, karta, śmigła, strefa, zgoda właściciela terenu). Gotowe gdy: odhaczanie przed lotem, reset po locie.
 - [x] **Dziennik lotów.** Przy miejscu: lot (data, czas, bateria, notatka, zdjęcia/klipy). Statystyki: liczba lotów, łączny czas, ulubione miejsce. Gotowe gdy: eksport CSV dziennika.
-- [ ] **Profil drona.** Model, masa, klasa, limit wiatru, numer operatora (lokalnie). Gotowe gdy: werdykt korzysta z profilu.
+- [x] **Profil drona.** Model, masa, klasa, limit wiatru, numer operatora (lokalnie). Gotowe gdy: werdykt korzysta z profilu.
 
 ### Faza 3 — Przygoda (zaangażowanie)
 - [ ] **Mapa skarbów z prawdziwego zdarzenia.** MapLibre + własne style „pergamin” (dzień) i „noc”: woda w tuszu, lasy kreskowaniem, drogi jak szlaki, etykiety Fraunces. X-y jako warstwa symboli. Gotowe gdy: mapa wygląda jak nasza, nie jak Google.

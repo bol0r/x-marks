@@ -4,7 +4,7 @@ import type { FlightSetup } from "../../src/core/verdict";
 import type { WxHour } from "../../src/core/weather";
 import { nextGoodHour, sortWindows, type WindowRow } from "../../src/core/windows";
 
-const setup: FlightSetup = { model: "", windLimit: 10 };
+const setup: FlightSetup = { model: "", mass: 0, droneClass: "C0", windLimit: 10, operator: "" };
 const HOUR = 60 * 60 * 1000;
 
 function hour(t: number, gust: number): WxHour {

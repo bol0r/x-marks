@@ -1,6 +1,6 @@
 import { Fragment } from "preact";
 import { useEffect, useState } from "preact/hooks";
-import { judgeFlight } from "../../core/verdict";
+import { judgeFlight, profileLine } from "../../core/verdict";
 import { fmtClouds, fmtPrecip, fmtTemp, fmtVis, fmtWind, pairAt, type WxPair } from "../../core/weather";
 import { loadKp } from "../../data/kp";
 import { loadWeather } from "../../data/weather";
@@ -9,12 +9,18 @@ import { droneSetup } from "../state";
 type WxView = { status: "loading" } | { status: "missing"; offline: boolean } | { status: "fresh" | "stale"; pair: WxPair };
 
 function VerdictLine({ hour, kp }: { hour: WxPair["now"]; kp: number | null }) {
-  const result = judgeFlight(hour, droneSetup.value, kp);
+  const setup = droneSetup.value;
+  const result = judgeFlight(hour, setup, kp);
   return (
-    <p class="verdict" data-verdict={result.level} data-reason={result.reason}>
-      <b>{result.label}</b>
-      <span>{result.reason}</span>
-    </p>
+    <>
+      <p class="verdict" data-verdict={result.level} data-reason={result.reason}>
+        <b>{result.label}</b>
+        <span>{result.reason}</span>
+      </p>
+      <p class="wx-foot" data-profile={setup.droneClass}>
+        {profileLine(setup)}
+      </p>
+    </>
   );
 }
 
